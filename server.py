@@ -130,7 +130,7 @@ def sendcli():
     asyncio.run(dab.set(pings=rawpings.replace("\n"+remPing, "")))
     print("removed "+remPing)
     print(str(asyncio.run(dab.view('pings'))))
-    return "Succesfully Removed "+remPing
+    return "200 - Succesfully Removed "+remPing
 
     
   if newPing not in pings:
@@ -138,13 +138,14 @@ def sendcli():
       try:
         requests.get(newPing)
         asyncio.run(dab.set(pings=str(asyncio.run(dab.view('pings'))) + '\n' + newPing))
-        return "URL successfully Added! consider tipping me at the bottom-right of the site, since you get one dollar for free!"
+        print(f"Added {newPing} to the database via CLI")
+        return "200 - URL successfully Added! consider tipping me at the bottom-right of the site, since you get one dollar for free!"
       except:
         return "Invalid URL! Please make sure you configured the webserver right!"
     else:
       return "Invalid URL! Please put in a valid URL including protocols like https://!" # I know that a URL should always start with protocols like https://, but some peeps dont
   else:
-    return "I am already pinging that URL!"
+    return "226 - I am already pinging that URL!"
 
 
 import random

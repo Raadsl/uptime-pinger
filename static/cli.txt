@@ -1,0 +1,6 @@
+It is NOT needed to edit these commands!
+Run this in a Replit Shell to ADD the URL to the pinger!
+`curl https://up.rdsl.ga/api/cli -X POST -F "add=https://${REPL_SLUG}.${REPL_OWNER}.repl.co/"`
+
+Run this in a Replit Shell to REMOVE it from the pinger!
+`curl https://up.rdsl.ga/api/cli -X POST -F "add=rem https://${REPL_SLUG}.${REPL_OWNER}.repl.co/"`
