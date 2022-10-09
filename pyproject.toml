@@ -8,6 +8,7 @@ authors = ["Navaneeth K M <navaneethkm004@gmail.com>"]
 python = "^3.8"
 replitdb = "^0.0.10"
 flask = "^1.1.2"
+aiohttp = "^3.8.3"
 
 [tool.poetry.dev-dependencies]
 

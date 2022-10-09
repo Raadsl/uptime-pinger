@@ -1,0 +1,58 @@
+Terms of Service ("Terms")
+
+Last updated: Oct 10, 2022
+
+Please read these Terms of Service ("Terms", "Terms of Service") carefully before using https://up.rdsl.ga website (the "Service") operated by Raadsel ("us", "we", or "our").
+
+Your access to and use of the Service is conditioned on your acceptance of and compliance with these Terms. These Terms apply to all visitors, users and others who access or use the Service.
+
+By accessing or using the Service you agree to be bound by these Terms. If you disagree with any part of the terms then you may not access the Service.
+
+Links To Other Web Sites
+
+Our Service may contain links to third-party web sites or services that are not owned or controlled by Raadsel.
+
+Raadsel has no control over, and assumes no responsibility for, the content, privacy policies, or practices of any third party web sites or services. You further acknowledge and agree that we shall not be responsible or liable, directly or indirectly, for any damage or loss caused or alleged to be caused by or in connection with use of or reliance on any such content, goods or services available on or through any such web sites or services.
+
+We strongly advise you to read the terms and conditions and privacy policies of any third-party web sites or services that you visit.
+
+Termination
+
+We may terminate or suspend access to our Service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.
+
+All provisions of the Terms which by their nature should survive termination shall survive termination, including, without limitation, ownership provisions, warranty disclaimers, indemnity and limitations of liability.
+
+Data Retention
+
+We may preserve or disclose any information if we believe that it is reasonably necessary to comply with a law, regulation, legal process, or governmental request; to protect the safety of any person; to address fraud, security or technical issues; or to protect Raadsel's rights or property.
+
+Governing Law
+
+These Terms shall be governed and construed in accordance with the laws of of the particular country where the Service is Registered, without regard to its conflict of law provisions.
+
+Our failure to enforce any right or provision of these Terms will not be considered a waiver of those rights. If any provision of these Terms is held to be invalid or unenforceable by a court, the remaining provisions of these Terms will remain in effect. These Terms constitute the entire agreement between us regarding our Service, and supersede and replace any prior agreements we might have between us regarding the Service.
+
+Changes
+
+We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material we will try to provide at least 15 days notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion.
+
+By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms. If you do not agree to the new terms, please stop using the Service.
+
+----
+
+Child Safety 
+1. You must be 18+ or at least 13+ with parental supervision to use this service.
+
+Privacy
+2. We respect your privacy but upon requested by law we will hand over them your activity logs.
+
+Access
+3. We can take down/ impose restrictions on your access to this service without any notice/ valid reason.
+
+Donations
+4. Donations may not be refunded at our discretion, however if you wish to unsend a donation, contact callum.gatekeeper@icloud.com. 
+
+Entries
+5. You may not submit a non replit site, nor a replit site of which its domain ends in replit.com repl.it id.repl.co or does not contain 4 segments (segments.divided.by.period). Doing so is attempting to evade our filters.
+
+5.1. You are not allowed to submit a url that is created for violating Replit or another site's ToS. If you procceed doing so, we will report the website in question to Replit, or other sites, moderators. And we will purge you from our systems.

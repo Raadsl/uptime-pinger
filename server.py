@@ -1,17 +1,60 @@
 import requests, replitdb, asyncio, flask
 from threading import Thread
+import urllib.parse
+import aiohttp
+from aiohttp import web
+
 dab = replitdb.AsyncClient()
 app = flask.Flask(__name__)
+
 
 @app.route('/')
 def index():
 
   return flask.render_template('index.html')
-  
+
+@app.route("/factory")
+def factory():
+  return flask.render_template('factory.html')
+
+@app.route("/others")
+def others():
+  return flask.render_template('others.html')
+
+
+
 async def remove(url):
   pings = str(dab.view('pings')).split('\n')
-  dab.set(pings=str(dab.view('pings')).replace(url+"\n", ""))
+  dab.set(pings=str(dab.view('pings')).replace("\n"+url, ""))
+
+
+async def check_replit(url, s=None):
+	url = urllib.parse.urlparse(url)
+	host = url.netloc
+	url = f'https://{host}/__repl'
+	own_session = False
+	if not s:
+		timeout = aiohttp.ClientTimeout(total=30)
+		s = aiohttp.ClientSession(timeout=timeout)
+		own_session = True
+
+	try:
+		r = await s.get(url)
+		if own_session: await s.close()
+		if str(r.status)[0] == '4' and not str(r.url).startswith('https://replit.com/'):
+			print(r.status, str(r.url))
+			return False
+		print(url, r.url, r.status)
+		return True
+	except Exception as e:
+		print(type(e), e, 'bruh!')
+		if own_session: await s.close()
+		return True
+
   
+
+
+
 
 @app.route('/stats')
 def stats():
@@ -36,6 +79,9 @@ def send():
   print(str(asyncio.run(dab.view('pings'))))
   print(pings)
   # remove ping
+  is_replit = asyncio.run(check_replit(newPing))
+  if not is_replit:
+    return flask.render_template('msg.html', message="This is not a replit server! (or you are using a proxy). RDSL Uptimer only supports Replit projects!")
   newPing = newPing.lower()
   remPing = newPing.replace("rem ", "", 1)
   if remPing in pings and newPing.startswith("rem "):
@@ -48,12 +94,6 @@ def send():
     print(str(asyncio.run(dab.view('pings'))))
     return flask.render_template('msg.html', message="Removed "+remPing)
 
-
-
-
-    
-  if not newPing.endswith("repl.co"):
-    return flask.render_template('msg.html', message="Invalid URL! Urls should end with `repl.co`")
     
   if newPing not in pings:
     if newPing.startswith("http"):

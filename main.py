@@ -5,7 +5,6 @@ from server import actualrun
 actualrun()
 
 
-
 dab = replitdb.AsyncClient()
 
 
@@ -25,6 +24,7 @@ async def ping():
           requests.get(i)
           an+=1
           gn+=1
+          
       except:
         an+=1
         bn+=1 
@@ -40,14 +40,8 @@ async def loop():
 
     await ping()
     await asyncio.sleep(16)
-  
-loop1 = asyncio.get_event_loop()
-loop1.run_until_complete(loop())
-loop1.close()
-#asyncio.ensure_future(loop())
 
-  
-  
-  
-
-
+asyncio.run(loop())
+#loop1 = asyncio.get_event_loop()
+#loop1.run_until_complete(loop())
+#loop1.close()
