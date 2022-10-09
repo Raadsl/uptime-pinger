@@ -109,6 +109,43 @@ def send():
     return flask.render_template('msg.html', message="I am already pinging that URL!")
 
 
+@app.route('/api/cli', methods=['POST'])
+def sendcli():
+  newPing = flask.request.form['add']
+  pings = str(asyncio.run(dab.view('pings'))).split('\n')
+  rawpings = str(asyncio.run(dab.view('pings')))
+  print(str(asyncio.run(dab.view('pings'))))
+  print(pings)
+  # remove ping
+  is_replit = asyncio.run(check_replit(newPing))
+  if not is_replit:
+    return "This is not a replit server! (or you are using a proxy). RDSL Uptimer only supports Replit projects!"
+  newPing = newPing.lower()
+  remPing = newPing.replace("rem ", "", 1)
+  if remPing in pings and newPing.startswith("rem "):
+    #newPings = str(asyncio.run(dab.view('pings')).replace(remPing+"\n", ""))
+    #print(newPings)
+    #asyncio.run(dab.set())
+
+    asyncio.run(dab.set(pings=rawpings.replace("\n"+remPing, "")))
+    print("removed "+remPing)
+    print(str(asyncio.run(dab.view('pings'))))
+    return "Succesfully Removed "+remPing
+
+    
+  if newPing not in pings:
+    if newPing.startswith("http"):
+      try:
+        requests.get(newPing)
+        asyncio.run(dab.set(pings=str(asyncio.run(dab.view('pings'))) + '\n' + newPing))
+        return "URL successfully Added! consider tipping me at the bottom-right of the site, since you get one dollar for free!"
+      except:
+        return "Invalid URL! Please make sure you configured the webserver right!"
+    else:
+      return "Invalid URL! Please put in a valid URL including protocols like https://!" # I know that a URL should always start with protocols like https://, but some peeps dont
+  else:
+    return "I am already pinging that URL!"
+
 
 import random
 def run():
