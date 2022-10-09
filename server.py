@@ -32,19 +32,20 @@ def stats():
 def send():
   newPing = flask.request.form['add']
   pings = str(asyncio.run(dab.view('pings'))).split('\n')
+  rawpings = str(asyncio.run(dab.view('pings')))
   print(str(asyncio.run(dab.view('pings'))))
   print(pings)
   # remove ping
   newPing = newPing.lower()
   remPing = newPing.replace("rem ", "", 1)
   if remPing in pings and newPing.startswith("rem "):
-    newPings = str(asyncio.run(dab.view('pings')).replace(remPing+"\n", ""))
-    print(newPings)
+    #newPings = str(asyncio.run(dab.view('pings')).replace(remPing+"\n", ""))
+    #print(newPings)
     #asyncio.run(dab.set())
 
-    asyncio.run(dab.set(pings=pings.remove(remPing)))
+    asyncio.run(dab.set(pings=rawpings.replace("\n"+remPing, "")))
     print("removed "+remPing)
-    print(pings)
+    print(str(asyncio.run(dab.view('pings'))))
     return flask.render_template('msg.html', message="Removed "+remPing)
 
 
