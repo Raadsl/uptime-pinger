@@ -169,7 +169,7 @@ input[type=text] {
   background-position: 10px 10px; 
   background-repeat: no-repeat;
   padding: 12px 20px 12px 40px;
-  transition: width 0.5s ease-in-out;
+  transition: width 0.4s ease-in-out;
 }
 
 input[type=text]:focus {
@@ -202,10 +202,6 @@ code {
 a>code {
     color: inherit;
 }
-
-  /*button*/
-
-
 
 /* CSS */
 .button-50 {
@@ -259,21 +255,28 @@ a>code {
   }
 }
 </style>
+<script>
+function loading() {
+  document.getElementById("msg").innerHTML = "Loading... <a title='I am pinging your Replit to make sure it is an actual server'>Please wait</a>";
+}
+</script>
     </head>
 
     <body class="bg">
         <div class="content">
             <center><h1 style="color: #7aa2f7;">RDSL Uptimer</h1>
             <p>A simple Pinger to keep your Repl online!</p>
+              <p id="msg"></p>
             <form action="{{ url_for('send') }}" method="post">
-		        	<input type="text" width="60%" name="add" placeholder="url to ping (eg: https://example.com)">
-        			<input type="submit" value="Go">
-        		</form> <!--What ya lurking arround here??-->
-            <p>Put: `<code>rem </code>` before your URL if you want to remove it from the pinger<br></p>
-            <p><a href="/static/cli.txt">Click here</a> to see how to add a url via the CLI (aka Shell)</p></center>
+		        	<input type="text" width="30" name="add" placeholder="url to ping (eg: https://example.com)">
+        			<input type="submit" onclick='loading()' value="Ping">
+        		</form>
+            <p>Put: `<code>rem </code>` before your URL if you want to remove it from the pinger</p>
+          <a href="/static/tos.txt" title="If maboi still sleeps it isnt my fault!!">Disclaimer & TOS</a></center>
             <button onclick='window.open("/stats", "_self")' class="button-50" role="button">Stats</button>|<button onclick='window.open("/factory", "_self")' class="button-50" role="button">See our factory</button>|<button onclick='window.open("https://raadsel.is-a.dev")' class="button-50" role="button">Raadsel's Website</button>
             </div>
         </div>
     </body>
-  <script async src="https://zink.tips/zwc.js?rid=6341ce73d38c12e2b604bcc5&c=gold"></script>
+    <script async src="https://zink.tips/zwc.js?rid=6341ce73d38c12e2b604bcc5&c=gold"></script>
+
 </html>

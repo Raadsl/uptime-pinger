@@ -21,7 +21,27 @@ def factory():
 def others():
   return flask.render_template('others.html')
 
-
+@app.route("/coolpeeps")
+def pplwhousethis():
+  pongs = str(asyncio.run(dab.view('pings'))).split('\n')
+  coolpeeps = "Cool peeps who use this pinger: Raadsel"
+  coolpeepsarr = ["raadsel"]
+  for i in pongs:
+    try:
+      o, name, repl, co = i.split(".")
+      if not name in coolpeepsarr:
+        coolpeepsarr.append(name)
+        coolpeeps += f", {name}"
+        print(f"NEW COOLPEEP {name}")
+        print(coolpeeps)
+      else: 
+        print("already in")
+        continue
+    except:
+      print("not repl thing")
+      continue
+  return flask.render_template('coolpeeps.html', peeps=coolpeeps)
+  
 
 async def remove(url):
   pings = str(dab.view('pings')).split('\n')
@@ -34,7 +54,7 @@ async def check_replit(url, s=None):
 	url = f'https://{host}/__repl'
 	own_session = False
 	if not s:
-		timeout = aiohttp.ClientTimeout(total=30)
+		timeout = aiohttp.ClientTimeout(total=15)
 		s = aiohttp.ClientSession(timeout=timeout)
 		own_session = True
 

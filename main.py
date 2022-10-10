@@ -24,21 +24,24 @@ async def ping():
           requests.get(i)
           an+=1
           gn+=1
-          
+          print(f"Pong: {i}")
       except:
         an+=1
         bn+=1 
         continue
       lst.append(i)
+    
     with open("pings.txt", "w") as v:
       v.write(f'{an}\n{gn}\n{bn}')
+  
       
 
 async def loop():
 
   while True:
-
+    
     await ping()
+    print("done with pinging")
     await asyncio.sleep(16)
 
 asyncio.run(loop())

@@ -255,19 +255,24 @@ a>code {
   }
 }
 </style>
-
+<script>
+function loading() {
+  document.getElementById("msg").innerHTML = "A simple Pinger to keep your Repl online!<br>Loading... <a title='I am pinging your Replit to make sure it is an actual server'>Please wait</a>";
+}
+</script>
     </head>
 
     <body class="bg">
         <div class="content">
             <center><h1 style="color: #7aa2f7;">RDSL Uptimer</h1>
             <p>A simple Pinger to keep your Repl online!</p>
-              <p>{{ message }}</p>
+              <p id="msg">{{ message }}</p>
             <form action="{{ url_for('send') }}" method="post">
 		        	<input type="text" width="30" name="add" placeholder="url to ping (eg: https://example.com)">
-        			<input type="submit" value="Ping">
+        			<input type="submit" onclick='loading()' value="Ping">
         		</form>
-            <p>Put: `<code>rem </code>` before your URL if you want to remove it from the pinger</p></center>
+            <p>Put: `<code>rem </code>` before your URL if you want to remove it from the pinger</p>
+          <a href="/static/tos.txt" title="If maboi still sleeps it isnt my fault!!">Disclaimer & TOS</a></center>
             <button onclick='window.open("/stats", "_self")' class="button-50" role="button">Stats</button>|<button onclick='window.open("/factory", "_self")' class="button-50" role="button">See our factory</button>|<button onclick='window.open("https://raadsel.is-a.dev")' class="button-50" role="button">Raadsel's Website</button>
             </div>
         </div>
