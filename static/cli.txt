@@ -1,4 +1,4 @@
-It is NOT needed to edit these commands!
+It is NOT needed to edit these commands! - Run the commands without the starting ` and ending `!
 Run this in a Replit Shell to ADD the URL to the pinger!
 `curl https://up.rdsl.ga/api/cli -X POST -F "add=https://${REPL_SLUG}.${REPL_OWNER}.repl.co/"`
 

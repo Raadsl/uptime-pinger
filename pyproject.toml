@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "simple-uptime"
+name = "RDSL Pinger"
 version = "1.0.0"
-description = "A pinger for keeping your projects up"
-authors = ["Navaneeth K M <navaneethkm004@gmail.com>"]
+description = "Cool uptimer for Replit made with Flask, to keep your Repls online!"
+authors = ["Raadsel <iraadsel@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"

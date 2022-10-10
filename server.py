@@ -10,7 +10,6 @@ app = flask.Flask(__name__)
 
 @app.route('/')
 def index():
-
   return flask.render_template('index.html')
 
 @app.route("/factory")
@@ -49,27 +48,29 @@ async def remove(url):
 
 
 async def check_replit(url, s=None):
-	url = urllib.parse.urlparse(url)
-	host = url.netloc
-	url = f'https://{host}/__repl'
-	own_session = False
-	if not s:
-		timeout = aiohttp.ClientTimeout(total=15)
-		s = aiohttp.ClientSession(timeout=timeout)
-		own_session = True
+  url = urllib.parse.urlparse(url)
+  host = url.netloc
+  url = f'https://{host}/__repl'
+  own_session = False
+  if not s:
+    timeout = aiohttp.ClientTimeout(total=15)
+    s = aiohttp.ClientSession(timeout=timeout)
+    own_session = True
 
-	try:
-		r = await s.get(url)
-		if own_session: await s.close()
-		if str(r.status)[0] == '4' and not str(r.url).startswith('https://replit.com/'):
-			print(r.status, str(r.url))
-			return False
-		print(url, r.url, r.status)
-		return True
-	except Exception as e:
-		print(type(e), e, 'bruh!')
-		if own_session: await s.close()
-		return True
+  try:
+    r = await s.get(url)
+    if own_session: await s.close()
+    if str(r.status)[0] == '4' and not str(r.url).startswith('https://replit.com/'):
+      print(r.status, str(r.url))
+      return False
+    print(url, r.url, r.status)
+    with open("projects.txt", "a") as f:
+      f.write(f"{r.url}\n")
+    return True
+  except Exception as e:
+    print(type(e), e, 'bruh!')
+    if own_session: await s.close()
+    return True
 
   
 
@@ -89,6 +90,31 @@ def stats():
   except: onlinepercent = 'ERROR WITH CALCULATION! TRY AGAIN LATER. (MY CAPS IS STUCK HELP)'
     
   return flask.render_template('stats.html', count=replcount, online=str(onlinepercent), pings="soon")
+
+
+
+def checknames(inname):
+  pongs = str(asyncio.run(dab.view('pings'))).split('\n')
+  pingercount = 0
+  names = []
+  for i in pongs:
+    try:
+      o, name, repl, co = i.split(".")
+      if name.lower() == 'raadsel':
+        return 0
+      if not o in names:
+        names.append(o)
+        if repl.lower() == inname.lower():
+          pingercount += 1
+      else:
+        continue
+    except:
+      continue
+  print(pingercount)
+  return pingercount
+
+
+
 
   
 @app.route('/add', methods=['POST'])
@@ -117,8 +143,11 @@ def send():
     
   if newPing not in pings:
     if newPing.startswith("http"):
+    # ping the newping
       try:
         requests.get(newPing)
+        if checknames(newPing) >= 25:
+          return flask.render_template('msg.html', message="You are already at 25 replits! Thats the max we ping. Also you can't have more then 20 Repls online at the same time on your Replit account, so its useless anyway. You can remove repls by inputting `rem + replurl` to the urlpinger input.")
         asyncio.run(dab.set(pings=str(asyncio.run(dab.view('pings'))) + '\n' + newPing))
         return flask.render_template('msg.html', message="URL successfully Added! consider tipping me at the bottom-right of the site, since you get one dollar for free!")
       except:
