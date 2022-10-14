@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html lang="en" class="bg">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+        <link rel="icon" type="image/x-icon" href="https://5895b253-7316-4557-b4fb-f3a24165a4ae.id.repl.co/static/assets/favicon.ico">
+          <title>Raadsel | Uptimer</title>
+            <!--discord embed things-->
+        <meta property="og:title" content="Raadsel's website!"> 
+        <meta property="og:image" content="https://i.imgur.com/wC8SnIV.png"> 
+        <meta property="og:description" content="Raadsel's uptimer pinger thing"> 
+        <meta name="theme-color" content="#0079F2"> 
+        <meta name="description" content="Raadsel's uptimer pinger thing!">
+<style>
+body {
+	font-family: 'Spinnaker', sans-serif;
+	margin: 0px;
+	padding-left: 25px;
+	color: rgb(10, 10, 10);
+	background-color: rgb(0, 0, 0);
+	font-size: 20px;
+}
+
+input{
+	font-family: 'Spinnaker', sans-serif;
+	background-color: rgb(0, 0, 0);
+	border: 2px solid rgb(10, 10, 10);
+	border-radius: 10px;
+	padding: 5px;
+	color: rgb(10, 10, 10);
+}
+
+input{
+	font-family: 'Spinnaker', sans-serif;
+	background-color: rgb(0, 0, 0);
+	border: 2px solid rgb(10, 10, 10);
+	border-radius: 10px;
+	padding: 5px;
+	color: rgb(10, 10, 10);
+}
+
+
+input[type=submit] {
+  padding: 5px 15px;
+  background: #6b87f5;
+  border: 0 none;
+  cursor: pointer;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
+:root {
+    --card-background: #314d5eda;
+}
+
+
+
+.bg {
+    background-image: url("https://5895b253-7316-4557-b4fb-f3a24165a4ae.id.repl.co/static/assets/bg.jpg");
+    background-size: cover;
+    background-position: top;
+    color: #c0caf5;
+    text-align: center;
+    font-family: "JetBrains Mono", monospace;
+}
+
+.card {
+    background-color: var(--card-background);
+    width: fit-content;
+    align-items: center;
+    text-align: center;
+    line-height: 30px;
+    padding: 20px;
+    border-radius: 10px;
+
+   /* centering */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.content {
+    background-color: var(--card-background);
+    width: fit-content;
+    height: fit-content;
+    text-align: left;
+    line-height: 30px;
+    padding: 20px;
+    border-radius: 10px;
+
+    /* centering */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.inline-list {
+    display: inline;
+}
+
+.il {
+    text-align: center;
+}
+
+/* get the visitcounter  bottom right*/
+
+div.visitcounter {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 120px;
+}
+
+
+
+.pointmouse:hover { 
+  cursor: pointer;
+  animation: shake 0.5s;
+
+  animation-iteration-count: infinite; /*go on forever*/
+}
+
+@keyframes shake {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  10% { transform: translate(-1px, -2px) rotate(-1deg); }
+  20% { transform: translate(-3px, 0px) rotate(1deg); }
+  30% { transform: translate(3px, 2px) rotate(0deg); }
+  40% { transform: translate(1px, -1px) rotate(1deg); }
+  50% { transform: translate(-1px, 2px) rotate(-1deg); }
+  60% { transform: translate(-3px, 1px) rotate(0deg); }
+  70% { transform: translate(3px, 1px) rotate(-1deg); }
+  80% { transform: translate(-1px, -1px) rotate(1deg); }
+  90% { transform: translate(1px, 2px) rotate(0deg); }
+  100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
+
+
+a {
+    text-decoration: none;
+    color: #7dcfff;
+    transition: 0.5s;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: #7aa2f7;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+ /*--button css */
+
+input[type=text] {
+  width: 130px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: white;
+  background-image: url('/static/assets/newrepl.jpg');
+  background-position: 10px 10px; 
+  background-repeat: no-repeat;
+  padding: 12px 20px 12px 40px;
+  transition: width 0.4s ease-in-out;
+}
+
+input[type=text]:focus {
+  width: 80%;
+}
+  
+code, kbd, pre, samp {
+    font-family: var(--bs-font-monospace);
+    font-size: 1em;
+    direction: ltr;
+    unicode-bidi: bidi-override;
+}
+pre {
+    display: block;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    overflow: auto;
+    font-size: .875em;
+}
+pre code {
+    font-size: inherit;
+    color: inherit;
+    word-break: normal;
+}
+code {
+    font-size: .875em;
+    color: #d63384;
+    word-wrap: break-word;
+}
+a>code {
+    color: inherit;
+}
+
+/* CSS */
+.button-50 {
+  appearance: button;
+  background-color: #000;
+  background-image: none;
+  border: 1px solid #000;
+  border-radius: 4px;
+  box-shadow: #fff 4px 4px 0 0,#000 4px 4px 0 1px;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: ITCAvantGardeStd-Bk,Arial,sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  margin: 0 5px 10px 0;
+  overflow: visible;
+  padding: 12px 40px;
+  text-align: center;
+  text-transform: none;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.button-50:focus {
+  text-decoration: none;
+}
+
+.button-50:hover {
+  text-decoration: none;
+}
+
+.button-50:active {
+  box-shadow: rgba(0, 0, 0, .125) 0 3px 5px inset;
+  outline: 0;
+}
+
+.button-50:not([disabled]):active {
+  box-shadow: #fff 2px 2px 0 0, #000 2px 2px 0 1px;
+  transform: translate(2px, 2px);
+}
+
+@media (min-width: 768px) {
+  .button-50 {
+    padding: 12px 50px;
+  }
+}
+</style>
+<script>
+
+</script>
+    </head>
+  {% if user_id %}
+<script src="https://replit.com/public/js/repl-auth-v2.js"></script>
+
+    <body class="bg">
+        <div class="content">
+            <center><h1 style="color: #7aa2f7;">RDSL Uptimer</h1>
+            <p>A simple Pinger to keep your Repl online!</p>
+              <p id="msg"></p>
+            <form action="{{ url_for('send') }}" method="post">
+		        	<input type="text" width="30%" name="add" placeholder="url to ping (eg: https://example.com)">
+        			<input type="submit" onclick='loading()' value="Ping">
+        		</form>
+            <p>Put: `<code>rem </code>` before your URL if you want to remove it from the pinger</p>
+            <p><a href="/static/cli.txt">Or run this command in the shell</a></p>
+            
+          <a href="/static/tos.txt" title="If maboi still sleeps it isnt my fault!!">Disclaimer & TOS</a></center>
+            <button onclick='window.open("/stats", "_self")' class="button-50" role="button">Stats</button>|<button onclick='window.open("/factory", "_self")' class="button-50" role="button">See our factory</button>|<button onclick='window.open("https://raadsel.is-a.dev")' class="button-50" role="button">Raadsel's Website</button>
+            </div>
+        </div>
+      <script async src="https://zink.tips/zwc.js?rid=6341ce73d38c12e2b604bcc5&c=gold"></script>
+
+	{% else %}
+    <html lang="en" class="bg">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/favicon.ico') }}">
+        <title>Raadsel | Uptimer</title>
+        <script src="https://replit.com/public/js/repl-auth-v2.js"></script>
+        <script async src="https://zink.tips/zwc.js?rid=6341ce73d38c12e2b604bcc5&c=gold"></script>
+
+    </head>
+      <style>
+        .red {
+          background-color: #EC4431;
+        }
+        .red:hover {
+          background-color: #F19085;
+      </style>
+    <body class="bg">
+        <div class="card">
+            <img src="https://i.imgur.com/wC8SnIV.png" style="border-radius: 20%">
+            <h1 style="color: #7aa2f7;"><span title="If you don't have Replit you will have to make a replit account. Or you can't message me. ">Please authenticate!</span></h1>
+            <p>	Before sending pinging, please authenticate via Replit.
+Authenticating via Replit is required to avoid spam, and random projects that weren't aded by their owner.<br></p>
+          
+          		--> <button class='button-50 red' onclick="LoginWithReplit()"> Login </button> <--
+        </div>
+	{% endif %}
+      
+    </body>
+    </html>
+    
