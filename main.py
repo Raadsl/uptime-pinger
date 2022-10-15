@@ -60,3 +60,11 @@ asyncio.run(loop())
 #loop1 = asyncio.get_event_loop()
 #loop1.run_until_complete(loop())
 #loop1.close()
+
+"""
+ * @INFO
+ * RDSL Pinger Coded by Raadsel#9398 | https://replit.com/@Raadsel
+ * @INFO
+ * Please mention Me, when using this Code!
+ * @INFO
+ """

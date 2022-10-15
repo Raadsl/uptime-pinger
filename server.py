@@ -6,6 +6,8 @@ import aiohttp
 from aiohttp import web
 import requests
 
+Lockdown = False
+
 dab = replitdb.AsyncClient()
 app = flask.Flask(__name__)
 
@@ -17,13 +19,15 @@ def index():
 
 @app.route("/") #new main page with login
 def login():
+  if Lockdown:
+    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!"
   
   return flask.render_template('login.html',
         user_id=flask.request.headers['X-Replit-User-Id'],
         user_name=flask.request.headers['X-Replit-User-Name']
     ), 200
 
-@app.route("/devindex") #new main page with login
+@app.route("/devindex") #new main page with login - Lockdown mode imune
 def devindex():
   
   return flask.render_template('dev.html',
@@ -34,15 +38,24 @@ def devindex():
   
 @app.route("/factory")
 def factory():
+  if Lockdown:
+    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!"
   return flask.render_template('factory.html'), 200
 
 @app.route("/api")
 def api():
-  return flask.render_template('api.html'), 200
+  if Lockdown:
+    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!"
+  return flask.render_template('api.html',
+        user_id=flask.request.headers['X-Replit-User-Id'],
+        user_name=flask.request.headers['X-Replit-User-Name']
+    ), 200
 
 
 @app.route('/logout')
 def logout():
+  if Lockdown:
+    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!"
     resp = make_response(flask.render_template('removing-cook.html'))
     resp.delete_cookie("REPL_AUTH", path='/', domain="up.rdsl.ga")
     return resp
@@ -53,10 +66,12 @@ def others():
 
 @app.route("/ping")
 def ping():
-  return "200", 200 #backup pinger
+  return "200", 200 #backup pinger - - Lockdown mode imune
 
 @app.route("/coolpeeps")
 def pplwhousethis():
+  if Lockdown:
+    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!"
   pongs = str(asyncio.run(dab.view('pings'))).split('\n')
   coolpeeps = "Cool peeps who use this pinger: Raadsel"
   coolpeepsarr = ["raadsel"]
@@ -149,6 +164,8 @@ async def check_owner(url, username, s=None):
 
 @app.route('/stats')
 def stats():
+  if Lockdown:
+    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!"
   with open("pings.txt", "r") as v:
     content = v.read()
   replcount = str(asyncio.run(dab.view('pings'))).split('\n')
@@ -189,6 +206,8 @@ def checknames(inname):
   
 @app.route('/add', methods=['POST']) #add repls by POST request
 def send():
+  if Lockdown:
+    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!"
   newPing = flask.request.form['add']
   pings = str(asyncio.run(dab.view('pings'))).split('\n')
   rawpings = str(asyncio.run(dab.view('pings')))
@@ -237,7 +256,8 @@ def send():
 
 @app.route('/api/cli', methods=['POST']) #yes ik this is not protected by repl auth
 def sendcli():
-  
+  if Lockdown:
+    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!"
   newPing = flask.request.form['add']
   pings = str(asyncio.run(dab.view('pings'))).split('\n')
   rawpings = str(asyncio.run(dab.view('pings')))
@@ -284,3 +304,16 @@ def run():
 def actualrun():  
     t = Thread(target=run)
     t.start()
+
+
+
+"""
+ * @INFO
+ * RDSL Pinger Coded by Raadsel#9398 | https://replit.com/@Raadsel
+ * @INFO
+ * Please mention Me, when using this Code!
+ * @INFO
+ """
+
+
+

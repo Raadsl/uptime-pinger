@@ -1,5 +1,4 @@
-<!-- Snow, DO NOT CHANGE THE CSS unless something is actually broken (which is fairly likely) and let me know when you change or add any content -->
-
+{% if user_id %}
 <!DOCTYPE html>
 <html>
   <head>
@@ -75,5 +74,30 @@ h2, p {
 
 <p> - Other sources of info: <a href="/static/FAQ.pdf">FAQ</a></p>
 <p><a href="/">Go back</a></p>
-  </body>
+    
+
+
+{% else %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Not logged in!</title>
+  <meta http-equiv="refresh" content="0.1;url=/" />
+</head>
+<body>
+  <p>Hold up... Your not logged in!</p>
+  {% endif %}
+</body>
 </html>
+
+<!--
+ * @INFO
+ * RDSL Pinger Coded by Raadsel#9398 | https://replit.com/@Raadsel
+ * @INFO
+ * Please mention Me, when using this Code!
+ * @INFO
+ -->
