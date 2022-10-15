@@ -1,4 +1,5 @@
 import requests, replitdb, asyncio, flask
+from flask import make_response
 from threading import Thread
 import urllib.parse
 import aiohttp
@@ -28,7 +29,11 @@ def factory():
   return flask.render_template('factory.html')
 
 
-
+@app.route('/logout')
+def logout():
+    resp = make_response(flask.render_template('removing-cook.html'))
+    resp.delete_cookie("REPL_AUTH", path='/', domain="up.rdsl.ga")
+    return resp
 
 @app.route("/others")
 def others():
@@ -66,6 +71,7 @@ async def remove(url):
 
 
 async def check_replit(url, username, s=None):
+  print("checking replit")
   url = urllib.parse.urlparse(url)
   host = url.netloc
   url = f'https://{host}/__repl'
@@ -82,7 +88,7 @@ async def check_replit(url, username, s=None):
       print(r.status, str(r.url))
       return False
     else:
-      return False
+      return True
     print(url, r.url, r.status)
 
   except Exception as e:
