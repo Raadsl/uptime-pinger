@@ -23,10 +23,22 @@ def login():
         user_name=flask.request.headers['X-Replit-User-Name']
     )
 
+@app.route("/devindex") #new main page with login
+def devindex():
+  
+  return flask.render_template('dev.html',
+        user_id=flask.request.headers['X-Replit-User-Id'],
+        user_name=flask.request.headers['X-Replit-User-Name']
+    )
 
+  
 @app.route("/factory")
 def factory():
   return flask.render_template('factory.html')
+
+@app.route("/api")
+def api():
+  return flask.render_template('api.html')
 
 
 @app.route('/logout')
