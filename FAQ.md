@@ -2,7 +2,7 @@
 
 # Table of content
 - [How do I add my webserver](#id-section1)
-- [How do I create a webserver](#id-section2)
+- [How do I create a webserver](#id-section2) (Python & NodeJS tutorial)
 - [How does this work?](#id-section3)
 
 ### **Alright heres the FAQ:**
@@ -15,7 +15,7 @@ Well its pretty simple. Just follow this easy step-by-step tutorial
 > Go to [up.rdsl.ga](https://up.rdsl.ga). If you visit this site for the first time you will see this: ![login-page](https://cdn.rdsl.ga/Qx4Bcz.png)
 > 
 <br>**step 2**
-> You now need to press login and a popup should show up. ![popup](https://cdn.rdsl.ga/1VdDf3.png)Press Authorize. This is completely safe and just verifies that you are you! <br>If instead of this a login page shows up. You first have to login to Replit to be able to use Replit Auth.
+> You now need to press login and a popup should show up. ![popup](https://cdn.rdsl.ga/1VdDf3.png)Press Authorize. This is completely safe and just verifies that you are you! <br>If instead of Authorize popup a Replit login page pops up. You have to login to Replit first to be able to use Replit Auth.
 
 **step 3**
 > Now you should be at the home page. ![home page](https://cdn.rdsl.ga/WT1UbT.png)
@@ -33,6 +33,12 @@ To keep your Repl online you have to create a webserver to ping.
 The code to create a webserver is different with each language so I will show a nodeJS example, and a Python example. If you are using Golang or another language you can just search for a webserver for that language [online](https://www.techopedia.com/definition/658/online)<!--For if you dont understand it:)-->.
 
 ### NodeJS example:
+There are 2 ways to create a webserver
+The 1st (and the easiest) way:
+Go to the shell and type `npm install replit-alive-server`
+Now go to your main file and paste this somewhere: `require('replit-alive-server')();`.
+It should start the webserver! <br><br>
+The 2nd way:
 Just paste this in the main js file you use.
 ```js
 var http = require('http');  
@@ -45,8 +51,21 @@ http.createServer(function (req, res) {
 Now it should create a webserver!
 <br>
 
+--------
+
 ### Python example
-For python you need to create another file called `keep_alive.py` (name doesnt have to be like this specific)<br>
+For python there are also 2 ways:<br>
+
+The 1st (and easy way):
+go to the shell and run `pip install replit-keep-alive==1.1.0`. Wait untill its done loading.
+Now go to your main file and paste this code somewhere
+```py
+from replit_keep_alive import WaitressStart
+WaitressStart()
+```
+Now you should have a webserver.<br><br>
+The 2nd way (and harder way):
+You need to create another file called `keep_alive.py` (name doesnt have to be like this specific)<br>
 In that file paste this code:
 ```py
 from flask import Flask
@@ -73,6 +92,8 @@ from keep_alive import keep_alive
 keep_alive()
 ```
 Now it should create a webserver!
+
+--------
 
 <br>
 <div id='id-section3'/>

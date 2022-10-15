@@ -21,7 +21,7 @@ def login():
   return flask.render_template('login.html',
         user_id=flask.request.headers['X-Replit-User-Id'],
         user_name=flask.request.headers['X-Replit-User-Name']
-    )
+    ), 200
 
 @app.route("/devindex") #new main page with login
 def devindex():
@@ -34,11 +34,11 @@ def devindex():
   
 @app.route("/factory")
 def factory():
-  return flask.render_template('factory.html')
+  return flask.render_template('factory.html'), 200
 
 @app.route("/api")
 def api():
-  return flask.render_template('api.html')
+  return flask.render_template('api.html'), 200
 
 
 @app.route('/logout')
@@ -49,11 +49,11 @@ def logout():
 
 @app.route("/others")
 def others():
-  return flask.render_template('others.html')
+  return flask.render_template('others.html'), 200
 
 @app.route("/ping")
 def ping():
-  return "200" #backup pinger
+  return "200", 200 #backup pinger
 
 @app.route("/coolpeeps")
 def pplwhousethis():
@@ -159,7 +159,7 @@ def stats():
     onlinepercent = str(onlinepercent).replace('.0', '%')
   except: onlinepercent = 'ERROR WITH CALCULATION! TRY AGAIN LATER. (MY CAPS IS STUCK HELP)'
     
-  return flask.render_template('stats.html', count=replcount, online=str(onlinepercent), pings="soon")
+  return flask.render_template('stats.html', count=replcount, online=str(onlinepercent), pings="soon"), 200
 
 
 
@@ -187,7 +187,7 @@ def checknames(inname):
 
 
   
-@app.route('/add', methods=['POST'])
+@app.route('/add', methods=['POST']) #add repls by POST request
 def send():
   newPing = flask.request.form['add']
   pings = str(asyncio.run(dab.view('pings'))).split('\n')
@@ -196,12 +196,12 @@ def send():
   print(pings)
   # remove ping
   if 'X-Replit-User-Name' in flask.request.headers:
-   username = flask.request.headers['X-Replit-User-Name']
+   username = flask.request.headers['X-Replit-User-Name'] #Check name
   is_replit = asyncio.run(check_replit(newPing, username))
-  if not is_replit:
+  if not is_replit: #check if site is from repl
     return flask.render_template('msg.html', message="This is not a replit server, or this isnt a Repl from you!! RDSL Uptimer only supports Replit projects, that were added by there owners!")
   is_owner = asyncio.run(check_owner(newPing, username))
-  if not is_owner:
+  if not is_owner: #check if user is the owner
     return flask.render_template('msg.html', message="This isnt a Repl from you!! RDSL Uptimer only pings Repls with permission from their owners!")
   newPing = newPing.lower()
   remPing = newPing.replace("rem ", "", 1)
@@ -221,21 +221,21 @@ def send():
     # ping the newping
       try:
         reqq = requests.get(newPing)
-        if not reqq.status_code in [200, 304, 100, 201, 202, 206, 302]:
+        if not reqq.status_code in [200, 304, 100, 201, 202, 206, 302]: #check if site is online
           return flask.render_template('msg.html', message="Invalid URL! Please make sure you configured the webserver right!")
         if checknames(newPing) >= 25:
           return flask.render_template('msg.html', message="You are already at 25 replits! Thats the max we ping. Also you can't have more then 20 Repls online at the same time on your Replit account, so its useless anyway. You can remove repls by inputting `rem + replurl` to the urlpinger input.")
         asyncio.run(dab.set(pings=str(asyncio.run(dab.view('pings'))) + '\n' + newPing))
-        return flask.render_template('msg.html', message="URL successfully Added! consider tipping me at the bottom-right of the site, since you get one dollar for free!")
+        return flask.render_template('msg.html', message="URL successfully Added! consider tipping me at the bottom-right of the site, since you get one dollar for free!"), 200
       except:
         return flask.render_template('msg.html', message="Invalid URL! Please make sure you configured the webserver right!")
     else:
-      return flask.render_template('msg.html', message="Invalid URL! Please put in a valid URL including protocols like https://!") # I know that a URL should always start with protocols like https://, but some peeps dont
+      return flask.render_template('msg.html', message="Invalid URL! Please put in a valid URL including protocols like https://") # I know that a URL should always start with protocols like https://, but some peeps dont
   else:
-    return flask.render_template('msg.html', message="I am already pinging that URL!")
+    return flask.render_template('msg.html', message="I am already pinging that URL!"), 226 # If the url is already in the database
 
 
-@app.route('/api/cli', methods=['POST']) #yes ik this is less protected (w\out repl auth)
+@app.route('/api/cli', methods=['POST']) #yes ik this is not protected by repl auth
 def sendcli():
   
   newPing = flask.request.form['add']
@@ -257,7 +257,7 @@ def sendcli():
     asyncio.run(dab.set(pings=rawpings.replace("\n"+remPing, "")))
     print("removed "+remPing)
     print(str(asyncio.run(dab.view('pings'))))
-    return "200 - Succesfully Removed "+remPing
+    return "200 - Succesfully Removed "+remPing, 200
 
     
   if newPing not in pings:
@@ -267,13 +267,13 @@ def sendcli():
         requests.get(newPing)
         asyncio.run(dab.set(pings=str(asyncio.run(dab.view('pings'))) + '\n' + newPing))
         print(f"Added {newPing} to the database via CLI")
-        return "200 - URL successfully Added! consider tipping me at https://zink.tips/raadsel, since you get one dollar for free!"
+        return "200 - URL successfully Added! consider tipping me at https://zink.tips/raadsel, since you get one dollar free credits to up!", 200
       except:
         return "Invalid URL! Please make sure you configured the webserver right!"
     else:
       return "Invalid URL! Please put in a valid URL including protocols like https://!" # I know that a URL should always start with protocols like https://, but some peeps dont
   else:
-    return "226 - I am already pinging that URL!"
+    return "226 - I am already pinging that URL!", 226
 
 
 import random
