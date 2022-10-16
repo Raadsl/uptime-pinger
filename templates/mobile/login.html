@@ -4,7 +4,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
         <link rel="icon" type="image/x-icon" href="https://5895b253-7316-4557-b4fb-f3a24165a4ae.id.repl.co/static/assets/favicon.ico">
           <title>⠕ Raadsel | Uptimer</title>
             <!--discord embed things-->
@@ -14,13 +14,23 @@
         <meta name="theme-color" content="#0079F2"> 
         <meta name="description" content="Raadsel's uptimer pinger thing!">
 <style>
-body {
-	font-family: 'Spinnaker', sans-serif;
-	margin: 0px;
-	padding-left: 25px;
-	color: rgb(10, 10, 10);
-	background-color: rgb(0, 0, 0);
-	font-size: 20px;
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
+input[type=text] {
+  width: 130px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: white;
+  background-image: url('/static/assets/newrepl.jpg');
+  background-position: 10px 10px; 
+  background-repeat: no-repeat;
+  padding: 12px 20px 12px 40px;
+  transition: width 0.4s ease-in-out;
+}
+
+input[type=text]:focus {
+  width: 80%;
 }
 
 input{
@@ -50,105 +60,51 @@ input[type=submit] {
   -webkit-border-radius: 5px;
   border-radius: 5px;
 }
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
-:root {
-    --card-background: #314d5eda;
+
+  
+body {
+  background-color: #080228;
 }
 
-
-
 .bg {
-    background-image: url("https://5895b253-7316-4557-b4fb-f3a24165a4ae.id.repl.co/static/assets/bg.jpg");
+    background-image: url("data:image/jpeg;base64,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");
     background-size: cover;
     background-position: top;
-    color: #c0caf5;
+    color: #080228;
     text-align: center;
     font-family: "JetBrains Mono", monospace;
 }
-
-.card {
-    background-color: var(--card-background);
-    width: fit-content;
-    align-items: center;
-    text-align: center;
-    line-height: 30px;
-    padding: 20px;
-    border-radius: 10px;
-    min-width: 940px
-   /* centering */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  
+:target > div {
+  background-color: #080228;
+  border-left: 3px solid #faa81a;
 }
 
-.content {
-    background-color: var(--card-background);
-    width: fit-content;
-    height: fit-content;
-    text-align: left;
-    line-height: 30px;
-    padding: 20px;
-    border-radius: 10px;
-
-    /* centering */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+section {
+  padding-top: 10px;
 }
 
-.inline-list {
-    display: inline;
+section > div {
+  padding: 10px;
 }
 
-.il {
-    text-align: center;
+h3 {
+  margin-top: 0;
 }
 
-/* get the visitcounter  bottom right*/
-
-div.visitcounter {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  width: 120px;
+h2, p {
+  margin: 5px 0 10px;
 }
-
-
-
-.pointmouse:hover { 
-  cursor: pointer;
-  animation: shake 0.5s;
-
-  animation-iteration-count: infinite; /*go on forever*/
-}
-
-@keyframes shake {
-  0% { transform: translate(1px, 1px) rotate(0deg); }
-  10% { transform: translate(-1px, -2px) rotate(-1deg); }
-  20% { transform: translate(-3px, 0px) rotate(1deg); }
-  30% { transform: translate(3px, 2px) rotate(0deg); }
-  40% { transform: translate(1px, -1px) rotate(1deg); }
-  50% { transform: translate(-1px, 2px) rotate(-1deg); }
-  60% { transform: translate(-3px, 1px) rotate(0deg); }
-  70% { transform: translate(3px, 1px) rotate(-1deg); }
-  80% { transform: translate(-1px, -1px) rotate(1deg); }
-  90% { transform: translate(1px, 2px) rotate(0deg); }
-  100% { transform: translate(1px, -2px) rotate(-1deg); }
-}
-
-
 
 a {
     text-decoration: none;
-    color: #7dcfff;
+    color: #304ddb;
     transition: 0.5s;
 }
 
 a:hover {
     text-decoration: underline;
-    color: #7aa2f7;
+    color: #12778B;
 }
 
 ul {
@@ -156,53 +112,8 @@ ul {
     padding: 0;
     margin: 0;
 }
- /*--button css */
 
-input[type=text] {
-  width: 130px;
-  box-sizing: border-box;
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  background-color: white;
-  background-image: url('/static/assets/newrepl.jpg');
-  background-position: 10px 10px; 
-  background-repeat: no-repeat;
-  padding: 12px 20px 12px 40px;
-  transition: width 0.4s ease-in-out;
-}
-
-input[type=text]:focus {
-  width: 80%;
-}
   
-code, kbd, pre, samp {
-    font-family: var(--bs-font-monospace);
-    font-size: 1em;
-    direction: ltr;
-    unicode-bidi: bidi-override;
-}
-pre {
-    display: block;
-    margin-top: 0;
-    margin-bottom: 1rem;
-    overflow: auto;
-    font-size: .875em;
-}
-pre code {
-    font-size: inherit;
-    color: inherit;
-    word-break: normal;
-}
-code {
-    font-size: .875em;
-    color: #d63384;
-    word-wrap: break-word;
-}
-a>code {
-    color: inherit;
-}
-
 /* CSS */
 .button-50 {
   appearance: button;
@@ -272,18 +183,22 @@ a>code {
 
     <body class="bg">
         <div class="content">
-            <center><h1 style="color: #7aa2f7;">RDSL Uptimer</h1>
+            <center><h1 style="color: #0000a5;">RDSL Uptimer<br>Mobile version</h1>
+              
+            <H3>{{ message }}</H3>
+
             <p>Hello {{ user_name }}, This is a simple Pinger to keep your Repl online!</p>
-              <p id="msg"></p>
+              <p id="msg"></p><br>
             <form action="{{ url_for('send') }}" method="post">
 		        	<input type="text" width="30%" name="add" placeholder="url to ping (eg: https://example.com)">
-        			<input type="submit" onclick='loading()' value="Ping">
+        			<input type="submit" onclick='loading()' value="Ping"><br>
         		</form>
             <p>Put: `<code>rem </code>` before your URL if you want to remove it from the pinger</p>
-            <p><a href="/api">Or run this command in the shell</a></p>
+            <p><a href="/api">Or run this command in the shell</a></p><br>
             <p>Need a webserver? <a href="/FAQ#id-section2">Click here</a> for a tutorial</p>
           <a href="/TOS" title="If maboi still sleeps it isnt my fault!!">Disclaimer & TOS</a> | <a href="/FAQ">FAQ</a></center>
-            <button onclick='window.open("/stats", "_self")' class="button-50" role="button">Stats</button>|<button onclick='window.open("/factory", "_self")' class="button-50" role="button">See our factory</button>|<button onclick='window.open("https://raadsel.is-a.dev")' class="button-50" role="button">Raadsel's Website</button>|<button onclick='window.open("/logout", "_self")' class="button-50 red" role="button">Logout</button>
+          <center><br>
+            <button onclick='window.open("/m/stats", "_self")' class="button-50" role="button">Stats</button>|<button onclick='window.open("/factory", "_self")' class="button-50" role="button">See our factory</button>|<button onclick='window.open("https://raadsel.is-a.dev")' class="button-50" role="button">Raadsel's Website</button>|<button onclick='window.open("/logout", "_self")' class="button-50 red" role="button">Logout</button></center>
             </div>
         </div>
       <script async src="https://zink.tips/zwc.js?rid=6341ce73d38c12e2b604bcc5&c=gold"></script>
@@ -317,10 +232,11 @@ Authenticating via Replit is required to avoid spam, and random projects that we
           		--> <button class='button-50 red' onclick="LoginWithReplit()"> Login </button> <--
         </div>
 	{% endif %}
+<footer><br><br><p style="color: #0000a5;">Your on the mobile version of RDSL Pinger</p></footer>
 <script type="text/javascript">
 
-if (screen.width <= 699) {
-document.location = "/m";
+if (screen.width => 700) {
+document.location = "/";
 }
 
 </script>

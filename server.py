@@ -43,6 +43,40 @@ def login():
         user_name=flask.request.headers['X-Replit-User-Name']
     ), 200
 
+# Mobile pages
+@app.route("/m/") #new main page with login
+def login_mobile():
+  if Lockdown:
+    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302
+  
+  return flask.render_template('/mobile/login.html',
+        user_id=flask.request.headers['X-Replit-User-Id'],
+        user_name=flask.request.headers['X-Replit-User-Name']
+    ), 200
+
+
+@app.route('/m/stats')
+def stats_mobile():
+  if Lockdown:
+    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302
+  with open("pings.txt", "r") as v:
+    content = v.read()
+  replcount = str(asyncio.run(dab.view('pings'))).split('\n')
+  replcount = str(len(replcount))
+  pingcount, online, offline = content.split('\n')
+  try:
+    onlinepercent = round(int(online) / int(pingcount) * 100)
+    onlinepercent = str(onlinepercent).replace('.0', '%')
+  except: onlinepercent = 'ERROR WITH CALCULATION! TRY AGAIN LATER. (MY CAPS IS STUCK HELP)'
+    
+  return flask.render_template('stats.html', count=replcount, online=str(onlinepercent), pings="soon"), 200
+
+
+# Mobile pages
+
+
+
+
 @app.route("/devindex") #new main page with login - Lockdown mode imune
 def devindex():
   
@@ -85,6 +119,7 @@ def logout():
     return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302
   resp = make_response(flask.render_template('removing-cook.html'))
   resp.delete_cookie("REPL_AUTH", path='/', domain="up.rdsl.ga")
+  resp.delete_cookie("REPL_AUTH", path='/', domain="up.raadsel.repl.co")
   return resp
 
 @app.route("/others")
@@ -293,6 +328,13 @@ def send():
       return flask.render_template('msg.html', message="Invalid URL! Please put in a valid URL including protocols like https://") # I know that a URL should always start with protocols like https://, but some peeps dont
   else:
     return flask.render_template('msg.html', message="I am already pinging that URL!"), 226 # If the url is already in the database
+
+
+
+
+# mobile add
+
+
 
 
 @app.route('/api/cli', methods=['POST']) #yes ik this is not protected by repl auth
