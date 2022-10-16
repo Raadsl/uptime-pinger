@@ -1,0 +1,230 @@
+<!-- Snow, DO NOT CHANGE THE CSS unless something is actually broken (which is fairly likely) and let me know when you change or add any content -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>RDSL Pinger FAQ</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css">
+<script>
+const contents = document.getElementById("contents");
+const items = document.querySelectorAll("section:not(:first-of-type)");
+
+for (item of items) {
+
+  let contentsItem = document.createElement("LI");
+  let contentsLink = document.createElement("A");
+
+  contentsLink.href = "#" + item.id;
+  contentsLink.innerText = item.firstElementChild.firstElementChild.innerText;
+
+  contentsItem.appendChild(contentsLink);
+  contents.appendChild(contentsItem);
+
+}
+</script>
+<style>
+body {
+  background-color: ##140b7a;
+}
+
+:target > div {
+  background-color: #49443c;
+  border-left: 3px solid #faa81a;
+}
+
+section {
+  padding-top: 10px;
+}
+
+section > div {
+  padding: 10px;
+}
+
+h3 {
+  margin-top: 0;
+}
+
+h2, p {
+  margin: 5px 0 10px;
+}
+
+
+.button-50 {
+  appearance: button;
+  background-color: #000;
+  background-image: none;
+  border: 1px solid #000;
+  border-radius: 4px;
+  box-shadow: #fff 4px 4px 0 0,#000 4px 4px 0 1px;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: ITCAvantGardeStd-Bk,Arial,sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  margin: 0 5px 10px 0;
+  overflow: visible;
+  padding: 12px 40px;
+  text-align: center;
+  text-transform: none;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.button-50:focus {
+  text-decoration: none;
+}
+
+.button-50:hover {
+  text-decoration: none;
+}
+
+.button-50:active {
+  box-shadow: rgba(0, 0, 0, .125) 0 3px 5px inset;
+  outline: 0;
+}
+
+.button-50:not([disabled]):active {
+  box-shadow: #fff 2px 2px 0 0, #000 2px 2px 0 1px;
+  transform: translate(2px, 2px);
+}
+
+@media (min-width: 768px) {
+  .button-50 {
+    padding: 12px 50px;
+  }
+}
+</style>
+  </head>
+  <body>
+<h1>This is the official FAQ of <a href="https://up.rdsl.ga">up.rdsl.ga</a></h1>
+<center><button class="button-50" onclick='window.open("/static/FAQ.pdf")'>FAQ PDF</button></center>
+<H2>Table of content</H2>
+    
+<li style="--c:#f1c40f;"><span><span></span> <a href="#id-section1">How do I add my webserver</a><br>
+<li style="--c:#f1c40f;"><span><span></span> <a href="#id-section2">How do I create a webserver</a> (Python & NodeJS tutorial)<br>
+<li style="--c:#f1c40f;"><span><span></span> <a href="#id-section3">How does this work?</a><br>
+
+<h4>Alright heres the FAQ:</h4>
+
+<div id='id-section1'/>
+  
+<h1>How do I add my webserver to RDSL Pinger?</h1>
+  
+Well its pretty simple. Just follow this easy step-by-step tutorial
+<br><strong>step 1</strong>
+<li style="--c:#f1c40f;"><span><span></span>
+Go to <a href="https://up.rdsl.ga">up.rdsl.ga</a>.<br> If you visit this site for the first time you will see this: <center><br><img src="https://cdn.rdsl.ga/Qx4Bcz.png"></center>
+<br>
+</span></li><br>
+<li style="--c:#f1c40f;"><span><span></span>
+<strong>step 2</strong><br><br>
+You now need to press login and a popup should show up. <br>
+<center><img src="https://cdn.rdsl.ga/1VdDf3.png"></center> <br>Press Authorize. This is completely safe and just verifies that you are you! <br>If instead of Authorize popup a Replit login page pops up. You have to login to Replit first to be able to use Replit Auth.
+</span></li><br>
+<li style="--c:#f1c40f;"><span><span></span>
+<strong>step 3</strong>
+Now you should be at the home page. <br><center><br><img src="https://cdn.rdsl.ga/WT1UbT.png"></center><br> <br>
+In the input-bar you have to input a URL to your webserver. You can get this by going to the webview tab at your Replit and copy the URL <center><br><img src="https://cdn.rdsl.ga/G0KmB4.png"><br></center>
+Now press "Ping". It should load a bit (this can take a bit because it has to verify that it is a Repl, and that you are the owner.)<br>
+Now you should get a alert. If it has been added to the Pinger you should see something like this. <center><img src="https://cdn.rdsl.ga/PZhrn1.png"></center> If something went wrong you should get a message with the error and how to fix it. Just follow those instructions!<br>Now you have added your webserver to our pinger! Until you remove it, it will be pinged every ~2 minutes
+</span></li>
+<br>
+<br><br><br>
+<div id='id-section2'/>
+  
+<h1>How do I create a webserver?</h1>
+
+<p>To keep your Repl online you have to create a webserver to ping.
+The code to create a webserver is different with each language so I will show a nodeJS, and a Python example. If you are using Golang or another language you can just search for a webserver for that language <a href="https://www.tech33opedia.com/definition/658/online">online</a><!--For if you dont understand it:)-->.
+</p>
+
+<h3> NodeJS example:</h3>
+There are 2 ways to create a webserver
+
+<h4>The 1st (and the easiest) way:</h4>
+Go to the shell and type <code>npm install replit-alive-server</code>
+Now go to your main file and paste this code somewhere: <code>require('replit-alive-server')();</code>.
+It should start the webserver! <br><br>
+<h4>The 2nd way:</h4>
+Just paste this in the main js file you use.
+<pre><code>
+var http = require('http');  
+http.createServer(function (req, res) {   
+  res.write("I'm alive"); //You can change this text
+  res.end(); 
+}).listen(8080);
+// Keep alive using up.rdsl.ga!
+</pre></code>
+Now it should create a webserver!
+<br>
+<br>
+
+<h3> Python example</h3>
+For python there are also 2 ways:<br>
+
+<h4>The 1st (and easy way):</h4>
+go to the shell and run <code>pip install replit-keep-alive==1.1.0</code>. Wait untill its done loading.
+Now go to your main file and paste this code somewhere
+<pre><code>
+from replit_keep_alive import WaitressStart
+WaitressStart()
+</pre></code>
+Now you should have a webserver.<br><br>
+<h4>The 2nd way (and harder way):</h4>
+You need to create another file called <code title="It doesnt have to be this specific name btw">keep_alive.py</code><br>
+In that file paste this code:<br>
+<pre><code>
+from flask import Flask
+from threading import Thread
+
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "I'm alive!" #You can change this text
+
+def run():
+  app.run(host='0.0.0.0',port=8080) #localhost doesn't work, thats why it is 0.0.0.0
+
+def keep_alive():  
+    t = Thread(target=run)
+    t.start()
+# Keep alive using up.rdsl.ga!
+</pre></code>
+
+Now go to your main py file and input this code somewhere
+<pre><code>
+from keep_alive import keep_alive
+keep_alive()
+</code><pre>
+Now it should create a webserver!
+<br>
+
+<br>
+<br>
+<div id='id-section3'/>
+
+<h1>How does this work?</h1>
+<p>By defauly Repls aren't always online, but go offline after some time of no activity
+There are two ways to fix this. Either buy Hacker plan and use <a href="https://docs.replit.com/repls/always-on">Always On</a>,<br>or create a webserver and use a pinger. (like this pinger). <br>I've shown you 2 tutorials for Python and NodeJS, but the concept works for anything in any language!
+</p>
+<p> - Other sources of info: <a href="/static/FAQ.pdf">FAQ PDF</a></p>
+<p><a href="/">Go back</a></p>
+  </body>
+</html>
+
+  <!--
+ * @INFO
+ * RDSL Pinger Coded by Raadsel#9398 | https://replit.com/@Raadsel
+ * @INFO
+ * Please mention Me, when using this Code!
+ * @INFO
+ -->

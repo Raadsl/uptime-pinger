@@ -46,13 +46,13 @@ Child Safety
 1. You must be 18+ or at least 13+ with parental supervision to use this service.
 
 Privacy
-2. We respect your privacy but upon requested by law we will hand over them your activity logs.
+2. We respect your privacy but upon requested by law we will hand over them all your activity logs we have.
 
 Access
 3. We can take down/ impose restrictions on your access to this service without any notice/ valid reason.
 
 Donations
-4. Donations may not be refunded at our discretion, however if you wish to unsend a donation, contact callum.gatekeeper@icloud.com. 
+4. Donations may not be refunded at our discretion. However you can try contacting the www.zink.tips support team.
 
 Entries
 5. You may not submit a non replit site, nor a replit site of which its domain ends in replit.com repl.it id.repl.co or does not contain 4 segments (segments.divided.by.period). Doing so is attempting to evade our filters.

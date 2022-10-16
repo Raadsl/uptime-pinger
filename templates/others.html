@@ -99,6 +99,119 @@ If this happens to you, try again for a bit or use these other pingers:</div>
 </body>
 
 </html>
+
+
+{% if user_id %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Raadsel | Other pingers</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css">
+<script>
+const contents = document.getElementById("contents");
+const items = document.querySelectorAll("section:not(:first-of-type)");
+
+for (item of items) {
+
+  let contentsItem = document.createElement("LI");
+  let contentsLink = document.createElement("A");
+
+  contentsLink.href = "#" + item.id;
+  contentsLink.innerText = item.firstElementChild.firstElementChild.innerText;
+
+  contentsItem.appendChild(contentsLink);
+  contents.appendChild(contentsItem);
+
+}
+</script>
+<style>
+body {
+  background-color: ##140b7a;
+}
+
+:target > div {
+  background-color: #49443c;
+  border-left: 3px solid #faa81a;
+}
+
+section {
+  padding-top: 10px;
+}
+
+section > div {
+  padding: 10px;
+}
+
+h3 {
+  margin-top: 0;
+}
+
+h2, p {
+  margin: 5px 0 10px;
+}
+</style>
+  </head>
+  <body>
+    <h1>Other pingers</h1>
+
+    <section id="add"><div>
+      <h2>Sometimes, Replit doesn't persist files.
+This means that now and then, when you add your webserver,
+it will stop being pinged after a few hours.
+
+If this happens to you, try again for a bit or use these other pingers:</h2>
+    </div></section>
+
+    <section id="remove"><div>
+      <h2>REMOVE a repl via the Replit Shell</h2>
+      <p>Run this in a Replit Shell to REMOVE it from the pinger!<br>
+<code>curl https://up.rdsl.ga/api/cli -X POST -F "add=rem https://${REPL_SLUG}.${REPL_OWNER}.repl.co"</code>
+      </p>
+    </div></section>
+
+    <section id="api"><div>
+      <h2>Or use an external source with a POST request</h2>
+      <p>It should look like this:<br>
+<code>curl https://up.rdsl.ga/api/cli -X POST -F "add=https://repl.guy.repl.co"</code></p>
+    </div></section>
+
+<p> - Other sources of info: <a href="/static/FAQ.pdf">FAQ</a></p>
+<p><a href="/">Go back</a></p>
+    
+
+
+{% else %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Not logged in!</title>
+  <meta http-equiv="refresh" content="0.1;url=/" />
+</head>
+<body>
+  <p>Hold up... Your not logged in!</p>
+  {% endif %}
+</body>
+</html>
+
+<!--
+ * @INFO
+ * RDSL Pinger Coded by Raadsel#9398 | https://replit.com/@Raadsel
+ * @INFO
+ * Please mention Me, when using this Code!
+ * @INFO
+ -->
+
+
+
+
+
+
 <!--
  * @INFO
  * RDSL Pinger Coded by Raadsel#9398 | https://replit.com/@Raadsel

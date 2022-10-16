@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+<html lang="en" class="bg">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+        <link rel="icon" type="image/x-icon" href="https://www.computerhope.com/jargon/e/error.png">
+        <title>Raadsel | {{ error }}!</title>
+
+
+            <!--discord embed things-->
+        <meta property="og:title" content="Raadsel's website!"> 
+        <meta property="og:image" content="https://i.imgur.com/wC8SnIV.png"> 
+        <meta property="og:description" content="404 not found!"> 
+        <meta name="theme-color" content="#0079F2"> 
+        <meta name="description" content="404 not found!">
+<style>
+/* CSS */
+.button-50 {
+  appearance: button;
+  background-color: #000;
+  background-image: none;
+  border: 1px solid #000;
+  border-radius: 4px;
+  box-shadow: #fff 4px 4px 0 0,#000 4px 4px 0 1px;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: ITCAvantGardeStd-Bk,Arial,sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  margin: 0 5px 10px 0;
+  overflow: visible;
+  padding: 12px 40px;
+  text-align: center;
+  text-transform: none;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.button-50:focus {
+  text-decoration: none;
+}
+
+.button-50:hover {
+  text-decoration: none;
+}
+
+.button-50:active {
+  box-shadow: rgba(0, 0, 0, .125) 0 3px 5px inset;
+  outline: 0;
+}
+
+.button-50:not([disabled]):active {
+  box-shadow: #fff 2px 2px 0 0, #000 2px 2px 0 1px;
+  transform: translate(2px, 2px);
+}
+
+@media (min-width: 768px) {
+  .button-50 {
+    padding: 12px 50px;
+  }
+}
+</style>
+    </head>
+<noscript><h2>Javascript is disabled in your browser, and this is an {{ error }} error</h2></noscript>
+    <body class="bg">
+        <div class="card">
+            <img src="data:image/jpeg;base64,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" style="border-radius: 20%">
+            <h1 style="color: #7aa2f7;"><span title="NOOOOOOOOOOOOOOOOOOOOOOOOO NOT THE {{ error }} ERROR:((((((">{{ error }}!</span></h1>
+            <p>{{ msg }}</p>
+            <ul>
+                <li class="inline-list">
+                    <button onclick='window.open("/","_self")' class='button-50'>Home</button>
+                </li>
+            </ul>
+        </div>
+    </body>
+</html>

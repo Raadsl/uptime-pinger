@@ -7,6 +7,7 @@ from aiohttp import web
 import requests
 
 Lockdown = False
+admins = ["Raadsel"]
 
 dab = replitdb.AsyncClient()
 app = flask.Flask(__name__)
@@ -20,7 +21,7 @@ def index():
 @app.route("/") #new main page with login
 def login():
   if Lockdown:
-    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!"
+    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302
   
   return flask.render_template('login.html',
         user_id=flask.request.headers['X-Replit-User-Id'],
@@ -35,18 +36,29 @@ def devindex():
         user_name=flask.request.headers['X-Replit-User-Name']
     )
 
+@app.route("/admin")
+def admin():
+  
+  if flask.request.headers.get('X-Replit-User-Name') in admins:
+    return flask.render_template("admin.html",
+                           user_id=flask.request.headers['X-Replit-User-Id'],
+                           user_name=flask.request.headers['X-Replit-User-Name'])
+  else:
+    return "You are not an admin!"
+
+
   
 @app.route("/factory")
 def factory():
   if Lockdown:
-    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!"
+    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302
   return flask.render_template('factory.html'), 200
 
 @app.route("/api")
 def api():
   if Lockdown:
-    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!"
-  return flask.render_template('api.html',
+    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302
+  return flask.render_template('/info/api.html',
         user_id=flask.request.headers['X-Replit-User-Id'],
         user_name=flask.request.headers['X-Replit-User-Name']
     ), 200
@@ -55,14 +67,28 @@ def api():
 @app.route('/logout')
 def logout():
   if Lockdown:
-    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!"
-    resp = make_response(flask.render_template('removing-cook.html'))
-    resp.delete_cookie("REPL_AUTH", path='/', domain="up.rdsl.ga")
-    return resp
+    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302
+  resp = make_response(flask.render_template('removing-cook.html'))
+  resp.delete_cookie("REPL_AUTH", path='/', domain="up.rdsl.ga")
+  return resp
 
 @app.route("/others")
 def others():
-  return flask.render_template('others.html'), 200
+  return flask.render_template('others.html'), 200 # imune to lockdown
+
+
+@app.route("/FAQ")
+def faqhtml():
+  if Lockdown:
+    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302
+  return flask.render_template('/info/FAQ.html'), 200
+
+@app.route("/TOS")
+def toshtml():
+  if Lockdown:
+    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries! To view the clean TOS go to https://up.rdsl.ga/static/tos.txt", 302
+  return flask.render_template('/info/TOS.html'), 200
+  
 
 @app.route("/ping")
 def ping():
@@ -71,7 +97,7 @@ def ping():
 @app.route("/coolpeeps")
 def pplwhousethis():
   if Lockdown:
-    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!"
+    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302
   pongs = str(asyncio.run(dab.view('pings'))).split('\n')
   coolpeeps = "Cool peeps who use this pinger: Raadsel"
   coolpeepsarr = ["raadsel"]
@@ -165,7 +191,7 @@ async def check_owner(url, username, s=None):
 @app.route('/stats')
 def stats():
   if Lockdown:
-    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!"
+    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302
   with open("pings.txt", "r") as v:
     content = v.read()
   replcount = str(asyncio.run(dab.view('pings'))).split('\n')
@@ -207,7 +233,7 @@ def checknames(inname):
 @app.route('/add', methods=['POST']) #add repls by POST request
 def send():
   if Lockdown:
-    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!"
+    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302
   newPing = flask.request.form['add']
   pings = str(asyncio.run(dab.view('pings'))).split('\n')
   rawpings = str(asyncio.run(dab.view('pings')))
@@ -257,7 +283,7 @@ def send():
 @app.route('/api/cli', methods=['POST']) #yes ik this is not protected by repl auth
 def sendcli():
   if Lockdown:
-    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!"
+    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302
   newPing = flask.request.form['add']
   pings = str(asyncio.run(dab.view('pings'))).split('\n')
   rawpings = str(asyncio.run(dab.view('pings')))
@@ -296,8 +322,19 @@ def sendcli():
     return "226 - I am already pinging that URL!", 226
 
 
+#ERROR HANDLING
+@app.errorhandler(404)
+def page_not_found(e):
+    return flask.render_template('/errors.html', error=404, msg="It looks like you got a 404 error! The page you are looking for is not here D:"), 404
+
+@app.errorhandler(500)
+def internal_error(e):
+    return flask.render_template('/errors.html', error=500, msg="The server failed to complete the request because server encountered an error"), 500
+
+
 import random
 def run():
+  print("[Waitress] Server started")
   from waitress import serve
   serve(app, host='0.0.0.0', port=random.randint(1000, 9999))
   

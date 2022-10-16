@@ -254,73 +254,34 @@ a>code {
     padding: 12px 50px;
   }
 }
-
-.red {
-  background-color: #EC4431;
-}
-.red:hover {
-  background-color: #F19085;
-  
-  
 </style>
 <script>
-
+function loading() {
+  document.getElementById("msg").innerHTML = "Loading... <a title='I am pinging your Replit to make sure it is an actual server'>Please wait</a>";
+}
 </script>
     </head>
-  {% if user_id %}
 <script src="https://replit.com/public/js/repl-auth-v2.js"></script>
 
     <body class="bg">
         <div class="content">
             <center><h1 style="color: #7aa2f7;">RDSL Uptimer</h1>
+              
             <p>Hello {{ user_name }}, This is a simple Pinger to keep your Repl online!</p>
               <p id="msg"></p>
-            <form action="{{ url_for('send') }}" method="post">
-		        	<input type="text" width="30%" name="add" placeholder="url to ping (eg: https://example.com)">
-        			<input type="submit" onclick='loading()' value="Ping">
-        		</form>
-            <p>Put: `<code>rem </code>` before your URL if you want to remove it from the pinger</p>
-            <p><a href="/api">Or run this command in the shell</a></p>
-            <p>Need a webserver? <a href="/FAQ#id-section2">Click here</a> for a tutorial</p>
-          <a href="/TOS" title="If maboi still sleeps it isnt my fault!!">Disclaimer & TOS</a> | <a href="/FAQ">FAQ</a></center>
+           
+           
+            <p>Soon Lockdown mode etc.</p>
+              <p>Need a webserver? <a href="https://up.rdsl.ga/static/FAQ.pdf#page=3&zoom=100,74,505">Click here</a> for a tutorial</p>
+          <a href="/static/tos.txt" title="If maboi still sleeps it isnt my fault!!">Disclaimer & TOS</a> | <a href="/static/FAQ.pdf">FAQ</a></center>
             <button onclick='window.open("/stats", "_self")' class="button-50" role="button">Stats</button>|<button onclick='window.open("/factory", "_self")' class="button-50" role="button">See our factory</button>|<button onclick='window.open("https://raadsel.is-a.dev")' class="button-50" role="button">Raadsel's Website</button>|<button onclick='window.open("/logout", "_self")' class="button-50 red" role="button">Logout</button>
             </div>
         </div>
-      <script async src="https://zink.tips/zwc.js?rid=6341ce73d38c12e2b604bcc5&c=gold"></script>
-
-	{% else %}
-    <html lang="en" class="bg">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/favicon.ico') }}">
-        <title>Raadsel | Uptimer</title>
-        <script src="https://replit.com/public/js/repl-auth-v2.js"></script>
-        <script async src="https://zink.tips/zwc.js?rid=6341ce73d38c12e2b604bcc5&c=gold"></script>
-
-    </head>
-      <style>
-        .red {
-          background-color: #EC4431;
-        }
-        .red:hover {
-          background-color: #F19085;
-      </style>
-    <body class="bg">
-        <div class="card">
-            <img src="https://i.imgur.com/wC8SnIV.png" style="border-radius: 20%">
-            <h1 style="color: #7aa2f7;"><span title="If you don't have Replit you will have to make a replit account. Or you can't message me. ">Please authenticate!</span></h1>
-            <p>	Before sending pinging, please authenticate via Replit.
-Authenticating via Replit is required to avoid spam, and random projects that weren't aded by their owner.<br></p>
-          
-          		--> <button class='button-50 red' onclick="LoginWithReplit()"> Login </button> <--
-        </div>
-	{% endif %}
-      
     </body>
-    </html>
-    
+    <script async src="https://zink.tips/zwc.js?rid=6341ce73d38c12e2b604bcc5&c=gold"></script>
+  
+
+</html>
 <!--
  * @INFO
  * RDSL Pinger Coded by Raadsel#9398 | https://replit.com/@Raadsel
