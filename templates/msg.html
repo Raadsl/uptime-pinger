@@ -274,7 +274,7 @@ function loading() {
             <center><h1 style="color: #7aa2f7;">RDSL Uptimer</h1>
             <p>A simple Pinger to keep your Repl online!</p>
               <p id="msg">{{ message }}</p>
-            <form action="{{ url_for('send') }}" method="post">
+            <form action="{{ url_for('send') }}" method="post"> <!--Send POST request to the server on submit-->
 		        	<input type="text" width="30" name="add" placeholder="url to ping (eg: https://example.com)">
         			<input type="submit" onclick='loading()' value="Ping">
         		</form>
@@ -289,7 +289,7 @@ function loading() {
 <script>
 alert("{{ message }}")
 </script>
-
+<!--mobile version-->
 <script type="text/javascript">
 
 if (screen.width <= 699) {
