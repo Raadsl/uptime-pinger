@@ -18,6 +18,7 @@ limitations under the License.
 import requests, replitdb, asyncio # to ping, replitDB, and asyncio for replitDB async
 from server import actualrun # loads site
 import aiohttp #to ping
+import time
 
 actualrun()
 
@@ -27,7 +28,7 @@ dab = replitdb.AsyncClient()
 print("All sites in DB:") #cool
 print(asyncio.run(dab.view('pings')))
 
-async def ping(): #pinging
+async def ping(starttime): #pinging
   ping=0
   an=0
   gn=0
@@ -38,22 +39,22 @@ async def ping(): #pinging
     if i not in lst:
       try:
         if i != '':
-          timeout = aiohttp.ClientTimeout(total=10) #10 seonds timeout max
+          timeout = aiohttp.ClientTimeout(total=9) #10 seonds timeout max
           async with aiohttp.ClientSession(timeout=timeout) as session: #now using aiohttp instead of requests
             async with session.get(i) as resp:
               if resp.status in [200, 304, 100, 201, 202, 206, 302]:
                 an += 1
                 gn += 1
-                bn += 1
               else:
                 an+=1
                 bn+=1 
-                print(f"Failed: {i} - {resp.status}")
-              print(f"Pong: {i} - {resp.status}")
+                print(f"\033[31mFailed: {i}\nStatus code: {resp.status}\nTimestamp: {time.time()}\033[0\nm")
+                continue
+              print(f"\033[32mPong: {i}\nStatus code: {resp.status}\nTimestamp: {time.time()}\033[0m\n")
           
           await asyncio.sleep(.05)
       except:
-        print(f"Failed: {i} - timed out probably") # exception appeared. Useally timeout error. No i dont feel like making an exception catcher only for timeouts and another for others things
+        print(f"\033[31mFailed: {i} \nStatus code: No code; probably timed out\nTimestamp: {time.time()}\033[0m\n") # exception appeared. Useally timeout error. No i dont feel like making an exception catcher only for timeouts and another for others things
         an+=1
         bn+=1 
         continue
@@ -61,18 +62,19 @@ async def ping(): #pinging
       ping+=1
   with open("./data/pings.txt", "r") as v: #opens file. Using this file instead of replitDB because.... idk. It works now. Thats alright for now=)
     impdata = v.read()
-    donepings, goodpings, notgoodpings, allpings = impdata.split('\n') # gets data
+    donepings, goodpings, notgoodpings, allpings, betweenpings = impdata.split('\n') # gets data
     totalPings = int(allpings) + ping #all pings that have been SEND. Not necissarily received
+    end = time.time()
+    totaltime = end - starttime
+    betweenpings = totaltime + 90
   with open("./data/pings.txt", "w") as v:
-    v.write(f'{an}\n{gn}\n{bn}\n{totalPings}') #adds data to data file
-    
-  print(ping)
-  #with open("data/allpings.txt", "a+") as f:
-    #pongs = f.read()
-    #totalpings = int(pongs)+pings
-    #f.write(f'{totalpings}')
-    
-    
+    v.write(f'{an}\n{gn}\n{bn}\n{totalPings}\n{round(betweenpings)}') #adds data to data file
+  
+  print(f"Total received pings: {ping}")
+
+
+  
+
 
   
       
@@ -80,11 +82,13 @@ async def ping(): #pinging
 async def loop(): # looping ping system
 
   while True:
-    print("Pinging\n")
-    await ping() #start pinging
- 
-    print("done with pinging")
-    await asyncio.sleep(60) #sleep
+    print(" ==================== Pinging ==================== \n")
+    start = time.time()
+    await ping(start) #start pinging
+    end = time.time()
+    totaltime = end - start
+    print(f" =============== Done with pinging =============== \nTook: {round(totaltime, 1)} seconds")
+    await asyncio.sleep(90) #sleep
 
 asyncio.run(loop())
 #loop1 = asyncio.get_event_loop()
@@ -98,4 +102,4 @@ asyncio.run(loop())
  * Please mention Me, when using this Code!
  * @INFO
  """
-# I am still doing it KEKW: Credits format from replit.com/discordaddict :)
+# I am still doing it KEKW: Credits format from replit.com/@discordaddict :)

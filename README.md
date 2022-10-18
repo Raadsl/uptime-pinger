@@ -1,11 +1,18 @@
-# Acknowledgements
-Took a lot of inspiration for the front-end from Pingers like: https://up.Coding398.dev and https://up.terminatorfishstudios.com. Also learnt about '<a href="https://zink.tips/">zink</a>' there
+# info
+A not really light-weighted pinger. It works tough!
+10 seconds countdown
++ awesome stats page & API
+For me:
+data/pings = allpings, goodpings, badpings, totalpings, time between pings
 
-Also took inspiration from up.may-be.gay for the login page. I ended up making an entire system for it with repl owner checks etc. And that was stolen from my personal website project: [raadsel.is-a.dev](https://raadsel.is-a.dev)
+# Acknowledgements
+Took a lot of inspiration for the front-end from Pingers like: [up.Coding398.dev](https://up.Coding398.dev) and [up.terminatorfishstudios.com](https://up.terminatorfishstudios.com). Also learnt about '<a href="https://zink.tips/">zink</a>' <!--Woah you can use <a href in markdown??? Didnt know that!-->there
+
+Also took inspiration from [up.may-be.gay](https://up.may-be.gay) for the login page. I ended up making an entire system for it with repl owner checks etc. And that was stolen from my personal website project: [raadsel.is-a.dev](https://raadsel.is-a.dev)
 
 Also took a lot of CSS from my other project: [raadsel.is-a.dev](https://raadsel.is-a.dev)
 
-Used https://dillinger.io to create the FAQ pdf from Markdown
+Used [dillinger.io](https://dillinger.io) to create the FAQ pdf from Markdown
 
 # License
 This project is licensed under [`the Apache License, Version 2.0`](https://www.apache.org/licenses/LICENSE-2.0)

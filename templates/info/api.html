@@ -53,26 +53,57 @@ h2, p {
   </head>
   <body>
     <h1>How to use the RDSL API</h1>
-
+    <h2>Add/remove repls to RDSL Pinger API</h2>
     <section id="add"><div>
-      <h2>ADD a repl via the Replit Shell</h2>
+      <h2>ADD a repl via the Replit Shell via POST requests</h2>
       <p>Run this in a Replit Shell to ADD the URL to the pinger!<br>
 <code>curl https://up.rdsl.ga/api/cli -X POST -F "add=https://${REPL_SLUG}.${REPL_OWNER}.repl.co"</code></p>
     </div></section>
 
     <section id="remove"><div>
       <h2>REMOVE a repl via the Replit Shell</h2>
-      <p>Run this in a Replit Shell to REMOVE it from the pinger!<br>
+      <p>Run this in a Replit Shell to REMOVE it from the pinger via POST requests<br>
 <code>curl https://up.rdsl.ga/api/cli -X POST -F "add=rem https://${REPL_SLUG}.${REPL_OWNER}.repl.co"</code>
       </p>
     </div></section>
 
-    <section id="api"><div>
+    <section id="add-api-curl"><div>
       <h2>Or use an external source with a POST request</h2>
       <p>It should look like this:<br>
 <code>curl https://up.rdsl.ga/api/cli -X POST -F "add=https://repl.guy.repl.co"</code></p>
     </div></section>
 
+    <section id="add-api-py"><div>
+      <h2>Python POST example:</h2>
+      <p>Python should look like this:<br>
+<pre><code>data = { 
+    'add': (None, 'https://repl.guy.repl.co'),
+}
+
+response = requests.post('https://up.rdsl.ga/api/cli/json', data=data)</code></pre></p>
+      <p>The <code>https://up.rdsl.ga/api/cli/json</code> URL returns data in JSON via the argument <code>msg</code>.</p>
+    </div></section>
+  <br>
+  <h1>Stats API</h1>
+  <h6>Small notice: This has a ratelimit of 1 request per 30 seconds!</h6>
+      
+    <section id="stats-api"><div>
+      <h2>How to get stats from RDSL Pinger:</h2>
+      <p>Using Bash it would look like this:<br>
+<code>curl https://up.rdsl.ga/api/stats</code></p>
+      <p>Then you get a JSON response with all stats</p>
+    </div></section>
+      
+    <section id="stats-api-py"><div>
+      <h2>Python example GET all stats data</h2>
+      <p>Python should look like this<br>
+<pre><code>f = request("https://up.rdsl.ga/api/stats")
+print(f)
+</code></pre></p>
+      <p>Then you also get a JSON response with all stats</p>
+    </div></section>
+
+    </div></section>
 <p> - Other sources of info: <a href="/static/FAQ.pdf">FAQ</a></p>
 <p><a href="/">Go back</a></p>
     
@@ -87,7 +118,7 @@ h2, p {
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Not logged in!</title>
-  <meta http-equiv="refresh" content="0.1;url=/" />
+  <meta http-equiv="refresh" content="0.2;url=/" />
 </head>
 <body>
   <p>Hold up... Your not logged in!</p>
