@@ -25,8 +25,14 @@ actualrun()
 
 dab = replitdb.AsyncClient()
 
-print("All sites in DB:") #cool
+print("All sites in DB:") #all sites in DB
 print(asyncio.run(dab.view('pings')))
+
+def remove(remPing): #remove a repl
+  rawpings = str(asyncio.run(dab.view('pings')))
+  asyncio.run(dab.set(pings=rawpings.replace("\n"+remPing, "")))
+
+
 
 async def ping(starttime): #pinging
   ping=0
@@ -52,25 +58,25 @@ async def ping(starttime): #pinging
                 continue
               print(f"\033[32mPong: {i}\nStatus code: {resp.status}\nTimestamp: {time.time()}\033[0m\n")
           
-          await asyncio.sleep(.05)
-      except:
-        print(f"\033[31mFailed: {i} \nStatus code: No code; probably timed out\nTimestamp: {time.time()}\033[0m\n") # exception appeared. Useally timeout error. No i dont feel like making an exception catcher only for timeouts and another for others things
+          # await asyncio.sleep(.05)
+      except Exception as e:
+        print(f"\033[31mFailed: {i} \nStatus code: probably timed out - {e}\nTimestamp: {time.time()}\033[0m\n") # exception appeared. Useally timeout error. 
         an+=1
         bn+=1 
         continue
       lst.append(i) #appends url to list with done pinged
       ping+=1
-  with open("./data/pings.txt", "r") as v: #opens file. Using this file instead of replitDB because.... idk. It works now. Thats alright for now=)
+  with open("./data/pings.txt", "r") as v: 
     impdata = v.read()
     donepings, goodpings, notgoodpings, allpings, betweenpings = impdata.split('\n') # gets data
     totalPings = int(allpings) + ping #all pings that have been SEND. Not necissarily received
     end = time.time()
     totaltime = end - starttime
-    betweenpings = totaltime + 90
+    betweenpings = totaltime + 100
   with open("./data/pings.txt", "w") as v:
     v.write(f'{an}\n{gn}\n{bn}\n{totalPings}\n{round(betweenpings)}') #adds data to data file
   
-  print(f"Total received pings: {ping}")
+  print(f"Total sent & received pings: {ping}")
 
 
   
@@ -87,8 +93,8 @@ async def loop(): # looping ping system
     await ping(start) #start pinging
     end = time.time()
     totaltime = end - start
-    print(f" =============== Done with pinging =============== \nTook: {round(totaltime, 1)} seconds")
-    await asyncio.sleep(90) #sleep
+    print(f" =============== Done with pinging =============== \nTook: {round(totaltime, 1)} seconds\nSleeping 100 seconds...")
+    await asyncio.sleep(100) #sleep
 
 asyncio.run(loop())
 #loop1 = asyncio.get_event_loop()

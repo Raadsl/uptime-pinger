@@ -58,15 +58,16 @@ input[type=submit] {
 
 
 .bg {
-    background-image: url("https://5895b253-7316-4557-b4fb-f3a24165a4ae.id.repl.co/static/assets/bg.jpg");
+    background-color: white;
     background-size: cover;
     background-position: top;
     color: #c0caf5;
-    text-align: center;
+
     font-family: "JetBrains Mono", monospace;
 }
 
-.card {
+/*
+  .card {
     background-color: var(--card-background);
     width: fit-content;
     align-items: center;
@@ -75,12 +76,13 @@ input[type=submit] {
     padding: 20px;
     border-radius: 10px;
 
-   /* centering */
+   /* centering * /
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
+*/  
 
 .content {
     background-color: var(--card-background);
@@ -91,11 +93,11 @@ input[type=submit] {
     padding: 20px;
     border-radius: 10px;
 
-    /* centering */
+    /* centering * /
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);*/
 }
 
 .inline-list {
@@ -271,8 +273,15 @@ function loading() {
               <p id="msg"></p>
            
            
-            <p>Soon Lockdown mode etc.</p>
-              <p>Need a webserver? <a href="https://up.rdsl.ga/static/FAQ.pdf#page=3&zoom=100,74,505">Click here</a> for a tutorial</p>
+            <p>All pinged repls:</p>
+              
+              <lu>
+            {% for i in repls%}
+              
+                <li>{{ i }}</li>
+              
+            {%endfor%}
+              </lu>
           <a href="/static/tos.txt" title="If maboi still sleeps it isnt my fault!!">Disclaimer & TOS</a> | <a href="/static/FAQ.pdf">FAQ</a></center>
             <button onclick='window.open("/stats", "_self")' class="button-50" role="button">Stats</button>|<button onclick='window.open("/factory", "_self")' class="button-50" role="button">See our factory</button>|<button onclick='window.open("https://raadsel.is-a.dev")' class="button-50" role="button">Raadsel's Website</button>|<button onclick='window.open("/logout", "_self")' class="button-50 red" role="button">Logout</button>
             </div>

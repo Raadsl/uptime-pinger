@@ -116,12 +116,16 @@ def devindex():
 def admin():
   if ultraLockdown: return "The server is currently in (Ultra) lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302 #lockdown mode
   if flask.request.headers.get('X-Replit-User-Name') in admins:
+    repls = asyncio.run(dab.view('pings')).split('\n')
     return flask.render_template("admin.html",
                            user_id=flask.request.headers['X-Replit-User-Id'],
-                           user_name=flask.request.headers['X-Replit-User-Name'])
+                           user_name=flask.request.headers['X-Replit-User-Name'],
+                           repls=repls)
   else:
     return "You are not an admin!"
 
+
+    
 
   
 @app.route("/factory")
@@ -461,18 +465,18 @@ def sendcliJSON():
         requests.get(newPing)
         asyncio.run(dab.set(pings=str(asyncio.run(dab.view('pings'))) + '\n' + newPing))
         print(f"Added {newPing} to the database via CLI")
-        msg = { "msg": "URL successfully Added! consider tipping me at https://zink.tips/raadsel, since you get one dollar free credits to up!"}
+        msg = { "msg": "URL successfully Added! consider tipping me at https://zink.tips/raadsel, since you get one dollar free credits to up!", "succes": True}
         return flask.jsonify(msg), 200
       except:
-        msg = { "msg": "Invalid URL! Please make sure you configured the webserver right!" }
+        msg = { "msg": "Invalid URL! Please make sure you configured the webserver right!", "succes": False }
         return flask.jsonify(msg), 400
    
     else:
-      msg = { "msg": "Invalid URL! Please put in a valid URL including protocols like https://!" }
+      msg = { "msg": "Invalid URL! Please put in a valid URL including protocols like https://!", "succes": False }
       return flask.jsonify(msg), 400 # I know that a URL should always start with protocols like https://, but some peeps dont
 
   else:
-    msg = { "msg": "226 - I am already pinging that URL!" }
+    msg = { "msg": "226 - I am already pinging that URL!", "succes": False }
     return flask.jsonify(msg), 226
     
 

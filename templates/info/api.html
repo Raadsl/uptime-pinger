@@ -69,10 +69,23 @@ h2, p {
 
     <section id="add-api-curl"><div>
       <h2>Or use an external source with a POST request</h2>
-      <p>It should look like this:<br>
-<code>curl https://up.rdsl.ga/api/cli -X POST -F "add=https://repl.guy.repl.co"</code></p>
+      <p>Bash example: It should look like this:<br>
+<code>curl https://up.rdsl.ga/api/cli/json -X POST -F "add=https://repl.guy.repl.co"</code></p>
     </div></section>
+<section id="add-api-py"><div>
+      <h2>NodeJS POST example:</h2>
+      <p>NodeJS should look like this:<br>
+<pre><code>data = { 
+import fetch, { FormData } from 'node-fetch';
 
+const form = new FormData();
+form.append('add', 'https://repl.guy.repl.co');
+
+fetch('https://up.rdsl.ga/api/cli/json', {
+    method: 'POST',
+    body: form
+});</code></pre></p>
+</div></section>
     <section id="add-api-py"><div>
       <h2>Python POST example:</h2>
       <p>Python should look like this:<br>
