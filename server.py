@@ -506,7 +506,12 @@ def statsAPI():
           "Online_Repls_Count": int(online),
           "All_Repls_Count": int(pingcount),
           "All_Pings_Sent": int(allpings),
-          "Time_Between_Pings": int(timebetween)
+          "Time_Between_Pings": int(timebetween),
+          "Owner": {
+            "Name": "Raadsel",
+            "Replit": "https://replit.com/@Raadsel",
+            "Github": "https://github.com/Raadsl"
+          }
           }
     
   
@@ -515,8 +520,17 @@ def statsAPI():
     data = {"error": True}
     return flask.jsonify(data), 400
                                
-
-
+    
+@app.route("/api/private/allrepls", methods=['GET'])
+def allreplsAPI(): #for backup pinger
+  key = flask.request.args.get('key')
+  if key != os.environ["ALLREPLSAPIKEY"]:
+    return flask.jsonify({"Error": "Invalid API key", "succes": False}), 403
+  repls = str(asyncio.run(dab.view('pings'))).split('\n')
+  return flask.jsonify({"Error": None, "All_Repls": repls, "succes": True})
+    
+  
+    
 
 
     

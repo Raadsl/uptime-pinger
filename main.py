@@ -25,6 +25,8 @@ actualrun()
 
 dab = replitdb.AsyncClient()
 
+TIMEOUT = 9 #timeout with pings in seconds
+
 print("All sites in DB:") #all sites in DB
 print(asyncio.run(dab.view('pings')))
 
@@ -45,7 +47,7 @@ async def ping(starttime): #pinging
     if i not in lst:
       try:
         if i != '':
-          timeout = aiohttp.ClientTimeout(total=9) #10 seonds timeout max
+          timeout = aiohttp.ClientTimeout(total=TIMEOUT) #10 seonds timeout max
           async with aiohttp.ClientSession(timeout=timeout) as session: #now using aiohttp instead of requests
             async with session.get(i) as resp:
               if resp.status in [200, 304, 100, 201, 202, 206, 302]:
@@ -77,6 +79,7 @@ async def ping(starttime): #pinging
     v.write(f'{an}\n{gn}\n{bn}\n{totalPings}\n{round(betweenpings)}') #adds data to data file
   
   print(f"Total sent & received pings: {ping}")
+  print(f"Total sent pings: {an}")
 
 
   
@@ -94,7 +97,10 @@ async def loop(): # looping ping system
     end = time.time()
     totaltime = end - start
     print(f" =============== Done with pinging =============== \nTook: {round(totaltime, 1)} seconds\nSleeping 100 seconds...")
-    await asyncio.sleep(100) #sleep
+    if start + 130 < end: #if somehow it gets overloaded
+      continue
+    else:
+      await asyncio.sleep(100) #sleep
 
 asyncio.run(loop())
 #loop1 = asyncio.get_event_loop()
@@ -109,3 +115,4 @@ asyncio.run(loop())
  * @INFO
  """
 # I am still doing it KEKW: Credits format from replit.com/@discordaddict :)
+

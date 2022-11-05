@@ -260,7 +260,40 @@ a>code {
 }
 .red:hover {
   background-color: #F19085;
-  
+
+.animated-progress {
+  width: 300px;
+  height: 30px;
+  border-radius: 5px;
+  margin: 20px 10px;
+  border: 1px solid rgb(189, 113, 113);
+  overflow: hidden;
+  position: relative;
+}
+
+.animated-progress span {
+  height: 100%;
+  display: block;
+  width: 0;
+  color: rgb(255, 251, 251);
+  line-height: 30px;
+  position: absolute;
+  text-align: end;
+  padding-right: 5px;
+}
+
+.progress-blue span {
+  background-color: blue;
+}
+.progress-green span {
+  background-color: green;
+}
+.progress-purple span {
+  background-color: indigo;
+}
+.progress-red span {
+  background-color: red;
+}
 </style>
     </head>
 
@@ -270,8 +303,10 @@ a>code {
             <p>Hover over text for more information!</p>
             <p title="The stats of RDSL Pinger">STATS</p>
             <p title="This is how much repls we keep alive">Uptimed Repls: {{ count }} Repls</p>
-            <p title="This is the percentage of repls that are alive and respond to our pings.">% of the repls that are online: {{ online }}%</p> <progress title="{{ online }}/100" value="{{ rawpercent }}" max="100"></progress>
-            <p title="The latest registered time between pings. So once in {{ timebetween }} your server gets pinged!">Time between pings: {{ timebetween }} seconds</p>
+            <p title="This is the percentage of repls that are alive and respond to our pings.">% of the repls that are online: {{ online }}%</p> <progress title="{{ online }}/100" value="{{ rawpercent }}" max="100">
+              
+            </progress>
+            <p title="The latest registered time between pings. So once in {{ timebetween }} seconds your server gets pinged!">Time between pings: {{ timebetween }} seconds</p>
             <p title="since 17-10">Total pings sent: {{ pings }} pings</p>
               <p title="so in total 2 ping servers">Backup ping servers: 1 backup servers</p> <!--static stat-->
             
