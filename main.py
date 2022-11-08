@@ -25,7 +25,7 @@ actualrun()
 
 dab = replitdb.AsyncClient()
 
-TIMEOUT = 9 #timeout with pings in seconds
+TIMEOUT = 10 #timeout with pings in seconds
 
 print("All sites in DB:") #all sites in DB
 print(asyncio.run(dab.view('pings')))

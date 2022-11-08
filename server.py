@@ -31,6 +31,7 @@ bannednames = [] #bans someone from using the front-end API. Still can add repls
 Lockdown = False
 ultraLockdown = False
 admins = ["Raadsel"]
+MAXREPLS = 40
 
 dab = replitdb.AsyncClient()
 app = flask.Flask(__name__)
@@ -196,13 +197,13 @@ def pplwhousethis():
       if not name in coolpeepsarr:
         coolpeepsarr.append(name)
         coolpeeps += f", {name}"
-        print(f"NEW COOLPEEP {name}")
-        print(coolpeeps)
+        #print(f"NEW COOLPEEP {name}")
+        #print(coolpeeps)
       else: 
-        print("already in") #if a peep has multiple repls
+        #print("already in") #if a peep has multiple repls
         continue
     except:
-      print("not repl thing") #if the domain isnt like up.raadsel.repl.co it errors and wont show name
+      #print("not repl thing") #if the domain isnt like up.raadsel.repl.co it errors and wont show name
       continue
   return flask.render_template('coolpeeps.html', peeps=coolpeeps)
   
@@ -286,10 +287,9 @@ def stats():
     return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302 #lockdown
   with open("./data/pings.txt", "r") as v: #opens file to obtaind ata
     content = v.read()
-  replcount = str(asyncio.run(dab.view('pings'))).split('\n')
-  replcount = str(len(replcount))
-  pingcount, online, offline, allpings, timebetween = content.split('\n')
-  print(timebetween)
+  replcount = str(asyncio.run(dab.view('pings'))).split('\n') #get all repls in db
+  replcount = str(len(replcount)) #get number of relps
+  pingcount, online, offline, allpings, timebetween = content.split('\n') #import all stat data
   try:
     Ronlinepercent = round(int(online) / int(pingcount) * 100)
     onlinepercent = str(Ronlinepercent).replace('.0', '%')
@@ -299,25 +299,25 @@ def stats():
 
 
 
-def checknames(inname): #check names? Forgor why I made this
-  pongs = str(asyncio.run(dab.view('pings'))).split('\n')
+def checknames(inname): #check names is To see if a user has exceeded the 25 repls limit - Edit: 40 is the limit
+  pongs = str(asyncio.run(dab.view('pings'))).split('\n') #get all repls
   pingercount = 0
   names = []
   for i in pongs:
     try:
-      o, name, repl, co = i.split(".")
-      if name.lower() == 'raadsel':
+      o, name, repl, co = i.split(".") #get the name if its a default repl domain
+      if name.lower() == 'raadsel': # I am built different
         return 0
       if not o in names:
         names.append(o)
         if repl.lower() == inname.lower():
-          pingercount += 1
+          pingercount += 1 #add 1 to the total count
       else:
         continue
     except:
       continue
   print(pingercount)
-  return pingercount
+  return pingercount #returns the number if pinged repls of that user
 
 
 
@@ -331,8 +331,8 @@ def send():
   newPing = flask.request.form['add']
   pings = str(asyncio.run(dab.view('pings'))).split('\n')
   rawpings = str(asyncio.run(dab.view('pings')))
-  print(str(asyncio.run(dab.view('pings'))))
-  print(pings)
+  # print(str(asyncio.run(dab.view('pings'))))
+  # print(pings)
   # remove ping
   if 'X-Replit-User-Name' in flask.request.headers:
    username = flask.request.headers['X-Replit-User-Name'] #Check name
@@ -346,23 +346,15 @@ def send():
   newPing = newPing.lower()
   remPing = newPing.replace("rem ", "", 1)
   if remPing in pings and newPing.startswith("rem "): #check if user wants to remove it
-    #newPings = str(asyncio.run(dab.view('pings')).replace(remPing+"\n", ""))
-    #print(newPings)
-    #asyncio.run(dab.set())
-    
     # SOON IP LOGGING WITH UNRECOVERABLE HASH SO IT DOESNT GET LEAKED AND I CAN SEE WHO DELETED WHAT #incase if someone tries to spam delete all repls loging IP
     
     
     asyncio.run(dab.set(pings=rawpings.replace("\n"+remPing, "")))
     print("removed "+remPing)
-    print(str(asyncio.run(dab.view('pings'))))
-    
-    
-    
+    # print(str(asyncio.run(dab.view('pings'))))
     
     return flask.render_template('msg.html', message="Removed "+remPing)
 
-    
   if newPing not in pings:
     if newPing.startswith("http"): #has to be http thing
     # ping the newping
@@ -370,8 +362,8 @@ def send():
         reqq = requests.get(newPing)
         if not reqq.status_code in [200, 304, 100, 201, 202, 206, 302]: #check if site is online
           return flask.render_template('msg.html', message="Invalid URL! Please make sure you configured the webserver right!") #if pinging failed
-        if checknames(newPing) >= 25:
-          return flask.render_template('msg.html', message="You are already at 25 replits! Thats the max we ping. Also you can't have more then 20 Repls online at the same time on your Replit account, so its useless anyway. You can remove repls by inputting `rem + replurl` to the urlpinger input.")
+        if checknames(newPing) >= MAXREPLS:
+          return flask.render_template('msg.html', message="You are already at 40 repls! Thats the max we ping. Also you can't have more then 40 Repls online at the same time on your Replit account, so its useless anyway. You can remove repls by inputting `rem + replurl` to the urlpinger input.")
         asyncio.run(dab.set(pings=str(asyncio.run(dab.view('pings'))) + '\n' + newPing))
         return flask.render_template('msg.html', message="URL successfully Added! consider tipping me at the bottom-right of the site, since you get one dollar for free!"), 200 #added & self promo
       except:
@@ -393,8 +385,8 @@ def sendcli():
   newPing = flask.request.form['add']
   pings = str(asyncio.run(dab.view('pings'))).split('\n')
   rawpings = str(asyncio.run(dab.view('pings')))
-  print(str(asyncio.run(dab.view('pings'))))
-  print(pings)
+  #print(str(asyncio.run(dab.view('pings'))))
+  #print(pings)
   # remove ping
   is_replit = asyncio.run(check_replit(newPing))
   if not is_replit:
@@ -408,14 +400,20 @@ def sendcli():
 
     asyncio.run(dab.set(pings=rawpings.replace("\n"+remPing, "")))
     print("removed "+remPing)
-    print(str(asyncio.run(dab.view('pings'))))
+    #print(str(asyncio.run(dab.view('pings'))))
     return "200 - Succesfully Removed "+remPing, 200
-
+  try:
+    o, name, repl, co = newPing.split(".")
+    if name in bannednames: return "You have been banned from using up.rdsl.ga!"
+  except: 
+    print("no repl domain")
     
   if newPing not in pings:
     if newPing.startswith("http"):
       try:
-        
+        if checknames(newPing) >= MAXREPLS:
+          return "403 - You are already at 40 uptimed repls! Thats the max we ping. Also you can't have more then 40 Repls online at the same time on your Replit account, so its useless anyway. You can remove repls by inputting `rem + replurl` to the urlpinger input."
+        asyncio.run(dab.set(pings=str(asyncio.run(dab.view('pings'))) + '\n' + newPing))
         requests.get(newPing)
         asyncio.run(dab.set(pings=str(asyncio.run(dab.view('pings'))) + '\n' + newPing))
         print(f"Added {newPing} to the database via CLI")
@@ -437,8 +435,8 @@ def sendcliJSON():
   newPing = flask.request.form['add']
   pings = str(asyncio.run(dab.view('pings'))).split('\n')
   rawpings = str(asyncio.run(dab.view('pings')))
-  print(str(asyncio.run(dab.view('pings'))))
-  print(pings)
+  #print(str(asyncio.run(dab.view('pings'))))
+  #print(pings)
   # remove ping
   is_replit = asyncio.run(check_replit(newPing))
   if not is_replit:
@@ -453,16 +451,24 @@ def sendcliJSON():
 
     asyncio.run(dab.set(pings=rawpings.replace("\n"+remPing, "")))
     print("removed "+remPing)
-    print(str(asyncio.run(dab.view('pings'))))
+    #print(str(asyncio.run(dab.view('pings'))))
     msg = { "msg": "Succesfully Removed "+remPing}
     return flask.jsonify(msg), 200
 
+  try:
+    o, name, repl, co = newPing.split(".")
+    if name in bannednames: return flask.jsonify({"msg": "You have been banned from using up.rdsl.ga!", "succes": False}), 403
+  except: 
+    print("no repl domain")
     
   if newPing not in pings:
     if newPing.startswith("http"):
       try:
         
         requests.get(newPing)
+        if checknames(newPing) >= MAXREPLS:
+          return flask.jsonify({"msg": "You are already at 40 repls! Thats the max we ping. Also you can't have more then 40 Repls online at the same time on your Replit account, so its useless anyway. You can remove repls by inputting `rem + replurl` to the urlpinger input.", "succes": False}), 400
+        asyncio.run(dab.set(pings=str(asyncio.run(dab.view('pings'))) + '\n' + newPing))
         asyncio.run(dab.set(pings=str(asyncio.run(dab.view('pings'))) + '\n' + newPing))
         print(f"Added {newPing} to the database via CLI")
         msg = { "msg": "URL successfully Added! consider tipping me at https://zink.tips/raadsel, since you get one dollar free credits to up!", "succes": True}
