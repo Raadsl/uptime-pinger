@@ -26,6 +26,7 @@ actualrun()
 dab = replitdb.AsyncClient()
 
 TIMEOUT = 10 #timeout with pings in seconds
+Startuptime = round(time.time()) # time that the repl started
 
 print("All sites in DB:") #all sites in DB
 print(asyncio.run(dab.view('pings')))
@@ -96,7 +97,7 @@ async def loop(): # looping ping system
     await ping(start) #start pinging
     end = time.time()
     totaltime = end - start
-    print(f" =============== Done with pinging =============== \nTook: {round(totaltime, 1)} seconds\nSleeping 100 seconds...")
+    print(f" =============== Done with pinging =============== \nTook: {round(totaltime, 1)} seconds\nFun fact: This repl has been online for {round(time.time()) - Startuptime} seconds!\nSleeping 100 seconds...")
     if start + 130 < end: #if somehow it gets overloaded
       continue
     else:
@@ -115,4 +116,3 @@ asyncio.run(loop())
  * @INFO
  """
 # I am still doing it KEKW: Credits format from replit.com/@discordaddict :)
-

@@ -26,12 +26,15 @@ import os
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
+import hashlib
 
-bannednames = [] #bans someone from using the front-end API. Still can add repls via CLI tho
+
+bannednames = [] #bans someone from using the front-end API. 
 Lockdown = False
 ultraLockdown = False
 admins = ["Raadsel"]
 MAXREPLS = 40
+
 
 dab = replitdb.AsyncClient()
 app = flask.Flask(__name__)
@@ -346,7 +349,12 @@ def send():
   newPing = newPing.lower()
   remPing = newPing.replace("rem ", "", 1)
   if remPing in pings and newPing.startswith("rem "): #check if user wants to remove it
-    # SOON IP LOGGING WITH UNRECOVERABLE HASH SO IT DOESNT GET LEAKED AND I CAN SEE WHO DELETED WHAT #incase if someone tries to spam delete all repls loging IP
+    # Get hashed IP:
+    ip = flask.request.remote_addr
+    # HASH IP:
+    ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
+    with open("data/removes.txt", "a") as f:
+      f.write(ipHash + ":" + remPing + " -- GUI\n")
     
     
     asyncio.run(dab.set(pings=rawpings.replace("\n"+remPing, "")))
@@ -393,11 +401,19 @@ def sendcli():
     return "This is not a replit server! RDSL Uptimer only supports Replit projects!", 400
   newPing = newPing.lower()
   remPing = newPing.replace("rem ", "", 1)
+  
+  
   if remPing in pings and newPing.startswith("rem "):
+    # Get hashed IP:
+    ip = flask.request.remote_addr
+    # HASH IP:
+    ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
+    with open("data/removes.txt", "a") as f:
+      f.write(ipHash + ":" + remPing + "\n")
     #newPings = str(asyncio.run(dab.view('pings')).replace(remPing+"\n", ""))
     #print(newPings)
     #asyncio.run(dab.set())
-
+    
     asyncio.run(dab.set(pings=rawpings.replace("\n"+remPing, "")))
     print("removed "+remPing)
     #print(str(asyncio.run(dab.view('pings'))))
@@ -445,6 +461,12 @@ def sendcliJSON():
   newPing = newPing.lower()
   remPing = newPing.replace("rem ", "", 1)
   if remPing in pings and newPing.startswith("rem "):
+    # Get hashed IP:
+    ip = flask.request.remote_addr
+    # HASH IP:
+    ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
+    with open("data/removes.txt", "a") as f:
+      f.write(ipHash + ":" + remPing + "\n")
     #newPings = str(asyncio.run(dab.view('pings')).replace(remPing+"\n", ""))
     #print(newPings)
     #asyncio.run(dab.set())
