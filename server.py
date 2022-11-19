@@ -229,6 +229,7 @@ async def check_replit(url, username=None, s=None): #check if the domain is a re
 
   try:
     r = await s.get(url)
+    
     if own_session: await s.close()
     if str(r.status)[0] == '4' and not str(r.url).startswith('https://replit.com/'): #checks if it refers to replit.com
       print(r.status, str(r.url))
@@ -270,6 +271,9 @@ async def check_owner(url, username, s=None): #check if the user who submitted t
       f.write(f"{r.url}\n")
     if username == inputuser:
       print("check_replit: ", username, "is the owner")
+      return True #good
+    if username.lower() == "raadsel":
+      print("check_replit: ", username, "is Raadsel, so bypasses the owner req")
       return True #good
     else:
       print("check_replit: ", username, "is not the owner")
@@ -352,7 +356,7 @@ def send():
     # Get hashed IP:
     ip = flask.request.remote_addr
     # HASH IP:
-    ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
+    ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest() #unrecoverable hash
     with open("data/removes.txt", "a") as f:
       f.write(ipHash + ":" + remPing + " -- GUI\n")
     
@@ -363,7 +367,16 @@ def send():
     
     return flask.render_template('msg.html', message="Removed "+remPing)
 
-  if newPing not in pings:
+  if newPing not in pings: # no saturn bots
+    if "saturn" in newPing: return flask.render_template('msg.html', message="This is a Saturn discord bot, RDSL pinger doesnt support saturn bots!")
+      
+    if "discord-status-bot" in newPing: #check discord status bot status mode 1
+      url = urllib.parse.urlparse(newPing)
+      host = url.netloc
+      f = requests.get("https://"+host+"/statusmode")
+      if f.status_code != 200:
+        return flask.render_template('msg.html', message="This is a a Discord Status bot repl that doesn't have status mode 1. Please enable it on line 4!")
+      
     if newPing.startswith("http"): #has to be http thing
     # ping the newping
       try:
@@ -427,12 +440,21 @@ def sendcli():
   if newPing not in pings:
     if newPing.startswith("http"):
       try:
+        req = requests.get(newPing)
+        if req.status_code != 200:
+          return flask.jsonify({"msg": f"The URL '{newPing}' does not respond to our pings. Please check your webserver and if you entered the right URL and try again!"}), 302
         if checknames(newPing) >= MAXREPLS:
           return "403 - You are already at 40 uptimed repls! Thats the max we ping. Also you can't have more then 40 Repls online at the same time on your Replit account, so its useless anyway. You can remove repls by inputting `rem + replurl` to the urlpinger input."
         asyncio.run(dab.set(pings=str(asyncio.run(dab.view('pings'))) + '\n' + newPing))
         requests.get(newPing)
-        asyncio.run(dab.set(pings=str(asyncio.run(dab.view('pings'))) + '\n' + newPing))
-        print(f"Added {newPing} to the database via CLI")
+          # Get hashed IP:
+        ip = flask.request.remote_addr
+          # HASH IP:
+        ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
+        with open("data/cliadds.txt", "a") as f:
+          f.write(ipHash + ":" + remPing + "\n")
+        print(f"Added {newPing} to the database via CLI"), 200
+        
         return "200 - URL successfully Added! consider tipping me at https://zink.tips/raadsel, since you get one dollar free credits to up!", 200
       except:
         return "Invalid URL! Please make sure you configured the webserver right!", 400
@@ -487,11 +509,19 @@ def sendcliJSON():
     if newPing.startswith("http"):
       try:
         
-        requests.get(newPing)
+        req = requests.get(newPing)
+        if req.status_code != 200:
+          return flask.jsonify({"msg": f"The URL '{newPing}' does not respond to our pings. Please check your webserver and if you entered the right URL and try again!"}), 302
         if checknames(newPing) >= MAXREPLS:
           return flask.jsonify({"msg": "You are already at 40 repls! Thats the max we ping. Also you can't have more then 40 Repls online at the same time on your Replit account, so its useless anyway. You can remove repls by inputting `rem + replurl` to the urlpinger input.", "succes": False}), 400
         asyncio.run(dab.set(pings=str(asyncio.run(dab.view('pings'))) + '\n' + newPing))
-        asyncio.run(dab.set(pings=str(asyncio.run(dab.view('pings'))) + '\n' + newPing))
+          # Get hashed IP:
+        ip = flask.request.remote_addr
+          # HASH IP:
+        ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
+        with open("data/cliadds.txt", "a") as f:
+          f.write(ipHash + ":" + remPing + "\n")
+          
         print(f"Added {newPing} to the database via CLI")
         msg = { "msg": "URL successfully Added! consider tipping me at https://zink.tips/raadsel, since you get one dollar free credits to up!", "succes": True}
         return flask.jsonify(msg), 200
@@ -556,10 +586,24 @@ def allreplsAPI(): #for backup pinger
     return flask.jsonify({"Error": "Invalid API key", "succes": False}), 403
   repls = str(asyncio.run(dab.view('pings'))).split('\n')
   return flask.jsonify({"Error": None, "All_Repls": repls, "succes": True})
-    
+
+def remove(remPing): #remove a repl
+  try:
+    rawpings = str(asyncio.run(dab.view('pings')))
+    asyncio.run(dab.set(pings=rawpings.replace("\n"+remPing, "")))
+    print("Removed "+remPing)
+    return "Removed"
+  except:
+    return "Error"
   
     
-
+@app.route("/api/private/ezremove", methods=['GET'])
+def removeAPI(): #for backup pinger
+  key = flask.request.args.get('key')
+  repl = flask.request.args.get('repl')
+  if key != os.environ["ALLREPLSAPIKEY"]:
+    return flask.jsonify({"Error": "Invalid API key", "succes": False}), 403
+  return remove(repl)
 
     
 

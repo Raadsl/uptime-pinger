@@ -98,7 +98,7 @@ async def loop(): # looping ping system
     end = time.time()
     totaltime = end - start
     print(f" =============== Done with pinging =============== \nTook: {round(totaltime, 1)} seconds\nFun fact: This repl has been online for {round(time.time()) - Startuptime} seconds!\nSleeping 100 seconds...")
-    if start + 130 < end: #if somehow it gets overloaded
+    if start + 80 < end: #if somehow it gets overloaded
       continue
     else:
       await asyncio.sleep(100) #sleep
