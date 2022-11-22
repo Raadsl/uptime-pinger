@@ -26,6 +26,9 @@ actualrun()
 dab = replitdb.AsyncClient()
 
 TIMEOUT = 10 #timeout with pings in seconds
+
+SLEEPTIME = 90
+
 Startuptime = round(time.time()) # time that the repl started
 
 print("All sites in DB:") #all sites in DB
@@ -75,7 +78,7 @@ async def ping(starttime): #pinging
     totalPings = int(allpings) + ping #all pings that have been SEND. Not necissarily received
     end = time.time()
     totaltime = end - starttime
-    betweenpings = totaltime + 100
+    betweenpings = totaltime + SLEEPTIME
   with open("./data/pings.txt", "w") as v:
     v.write(f'{an}\n{gn}\n{bn}\n{totalPings}\n{round(betweenpings)}') #adds data to data file
   
@@ -97,11 +100,12 @@ async def loop(): # looping ping system
     await ping(start) #start pinging
     end = time.time()
     totaltime = end - start
-    print(f" =============== Done with pinging =============== \nTook: {round(totaltime, 1)} seconds\nFun fact: This repl has been online for {round(time.time()) - Startuptime} seconds!\nSleeping 100 seconds...")
-    if start + 80 < end: #if somehow it gets overloaded
+    print(f" =============== Done with pinging =============== \nTook: {round(totaltime, 1)} seconds\nFun fact: This repl has been online for {round(time.time()) - Startuptime} seconds!\nSleeping {SLEEPTIME} seconds...")
+    if start + 30 + SLEEPTIME< end: #if somehow it gets overloaded
+      print("Pinging took too long, ignoring sleep time...")
       continue
     else:
-      await asyncio.sleep(100) #sleep
+      await asyncio.sleep(SLEEPTIME) #sleep
 
 asyncio.run(loop())
 #loop1 = asyncio.get_event_loop()

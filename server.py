@@ -30,6 +30,7 @@ import hashlib
 
 
 bannednames = [] #bans someone from using the front-end API. 
+bannedIPs = [] #bans a hashed ip from the cli api
 Lockdown = False
 ultraLockdown = False
 admins = ["Raadsel"]
@@ -56,6 +57,11 @@ if os.environ["REPL_ID"] != "1fcd37d8-24c8-455d-a7eb-abbbc3a0b45a": Lockdown = T
 def index():
   return flask.render_template('index.html')
 """
+
+#def numberWithCommas(x):
+#    return str(x).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
+
+
 
 @app.route("/") #new main page with login
 @limiter.exempt
@@ -326,8 +332,26 @@ def checknames(inname): #check names is To see if a user has exceeded the 25 rep
   print(pingercount)
   return pingercount #returns the number if pinged repls of that user
 
+def add(repl):
+  try:
+    print("Adding: "+repl)
+    asyncio.run(dab.set(pings=str(asyncio.run(dab.view('pings'))) + '\n' + repl))
+    print("Added "+repl)
+  except:
+    print("ERROR WITH ADDING "+repl)
 
+def remove(repl):
+  try:
+    print("Removing: "+repl)
+    rawpings = str(asyncio.run(dab.view('pings')))
+    asyncio.run(dab.set(pings=rawpings.replace("\n"+repl, "")))
+    print("Removed "+repl)
+  except:
+    print("ERROR WITH REMOVING "+repl)
 
+def checkIP(IP):
+  if IP in bannedIPs: return True
+  else: return False
 
   
 @app.route('/add', methods=['POST']) #add repls by POST request
@@ -335,12 +359,16 @@ def checknames(inname): #check names is To see if a user has exceeded the 25 rep
 def send():
   if Lockdown:
     return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302 #lockdown mode. No repls can be added
+  # check for banned hashed IP's
+  ip = flask.request.remote_addr
+  ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
+  if checkIP(ipHash): return flask.render_template("msg.html", message="This IP has been banned from using RDSL uptimer")
+
+    
   newPing = flask.request.form['add']
   pings = str(asyncio.run(dab.view('pings'))).split('\n')
-  rawpings = str(asyncio.run(dab.view('pings')))
-  # print(str(asyncio.run(dab.view('pings'))))
-  # print(pings)
-  # remove ping
+
+
   if 'X-Replit-User-Name' in flask.request.headers:
    username = flask.request.headers['X-Replit-User-Name'] #Check name
   if username in bannednames: return "You have been banned from using this service, please contact the admin", 403
@@ -349,7 +377,8 @@ def send():
     return flask.render_template('msg.html', message="This is not a replit server, or this isnt a Repl from you!! RDSL Uptimer only supports Replit projects, that were added by there owners!") #not replit
   is_owner = asyncio.run(check_owner(newPing, username))
   if not is_owner: #check if user is the owner
-    return flask.render_template('msg.html', message="This isnt a Repl from you!! RDSL Uptimer only pings Repls with permission from their owners!") #not replit owner
+    print("NOT OWNER, -- not adding")
+    return flask.render_template('msg.html', message="This isnt a Repl from you!! RDSL Uptimer only pings Repls with permission from their owners! If this is a team repl. Im sorry for the difficulties, you can bypass this by ading it via the CLI/API!") #not replit owner
   newPing = newPing.lower()
   remPing = newPing.replace("rem ", "", 1)
   if remPing in pings and newPing.startswith("rem "): #check if user wants to remove it
@@ -360,8 +389,8 @@ def send():
     with open("data/removes.txt", "a") as f:
       f.write(ipHash + ":" + remPing + " -- GUI\n")
     
-    
-    asyncio.run(dab.set(pings=rawpings.replace("\n"+remPing, "")))
+    remove(remPing)
+    #asyncio.run(dab.set(pings=rawpings.replace("\n"+remPing, "")))
     print("removed "+remPing)
     # print(str(asyncio.run(dab.view('pings'))))
     
@@ -375,7 +404,8 @@ def send():
       host = url.netloc
       f = requests.get("https://"+host+"/statusmode")
       if f.status_code != 200:
-        return flask.render_template('msg.html', message="This is a a Discord Status bot repl that doesn't have status mode 1. Please enable it on line 4!")
+        print("Discord status bot doesnt have statusmode 1")
+        return flask.render_template('msg.html', message="This is a a Discord Status bot repl that doesnt have status mode 1. Please enable it on line 4!\nIf you did enable statusmode 1 and it still gives this message, please update to the latest version! (fork it here --> https://replit.com/@Raadsel/Discord-Status-bot?v=1)"), 403
       
     if newPing.startswith("http"): #has to be http thing
     # ping the newping
@@ -385,7 +415,9 @@ def send():
           return flask.render_template('msg.html', message="Invalid URL! Please make sure you configured the webserver right!") #if pinging failed
         if checknames(newPing) >= MAXREPLS:
           return flask.render_template('msg.html', message="You are already at 40 repls! Thats the max we ping. Also you can't have more then 40 Repls online at the same time on your Replit account, so its useless anyway. You can remove repls by inputting `rem + replurl` to the urlpinger input.")
-        asyncio.run(dab.set(pings=str(asyncio.run(dab.view('pings'))) + '\n' + newPing))
+        
+        add(newPing) # ADD REPL
+        
         return flask.render_template('msg.html', message="URL successfully Added! consider tipping me at the bottom-right of the site, since you get one dollar for free!"), 200 #added & self promo
       except:
         return flask.render_template('msg.html', message="Invalid URL! Please make sure you configured the webserver right!")
@@ -403,12 +435,14 @@ def send():
 def sendcli():
   if Lockdown:
     return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries! Lockdown mode also means the entire API goes offline!", 302
+  # check for banned hashed IP's
+  ip = flask.request.remote_addr
+  ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
+  if checkIP(ipHash): return "403, this IP has been banned from using RDSL uptimer"
+    
   newPing = flask.request.form['add']
   pings = str(asyncio.run(dab.view('pings'))).split('\n')
-  rawpings = str(asyncio.run(dab.view('pings')))
-  #print(str(asyncio.run(dab.view('pings'))))
-  #print(pings)
-  # remove ping
+
   is_replit = asyncio.run(check_replit(newPing))
   if not is_replit:
     return "This is not a replit server! RDSL Uptimer only supports Replit projects!", 400
@@ -421,15 +455,12 @@ def sendcli():
     ip = flask.request.remote_addr
     # HASH IP:
     ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
+    
     with open("data/removes.txt", "a") as f:
       f.write(ipHash + ":" + remPing + "\n")
-    #newPings = str(asyncio.run(dab.view('pings')).replace(remPing+"\n", ""))
-    #print(newPings)
-    #asyncio.run(dab.set())
-    
-    asyncio.run(dab.set(pings=rawpings.replace("\n"+remPing, "")))
-    print("removed "+remPing)
-    #print(str(asyncio.run(dab.view('pings'))))
+
+    remove(remPing)
+
     return "200 - Succesfully Removed "+remPing, 200
   try:
     o, name, repl, co = newPing.split(".")
@@ -445,7 +476,16 @@ def sendcli():
           return flask.jsonify({"msg": f"The URL '{newPing}' does not respond to our pings. Please check your webserver and if you entered the right URL and try again!"}), 302
         if checknames(newPing) >= MAXREPLS:
           return "403 - You are already at 40 uptimed repls! Thats the max we ping. Also you can't have more then 40 Repls online at the same time on your Replit account, so its useless anyway. You can remove repls by inputting `rem + replurl` to the urlpinger input."
-        asyncio.run(dab.set(pings=str(asyncio.run(dab.view('pings'))) + '\n' + newPing))
+
+        ip = flask.request.remote_addr
+          # HASH IP:
+        ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
+
+        if checkIP(ipHash):
+          return "Your IP has been banned from using RDSL uptimer"
+        
+        add(newPing)
+        
         requests.get(newPing)
           # Get hashed IP:
         ip = flask.request.remote_addr
@@ -470,6 +510,12 @@ def sendcliJSON():
   if Lockdown:
     lockdownmsg = {"msg": "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries! Lockdown mode also means the entire API goes offline!"}
     return flask.jsonify(lockdownmsg), 302
+    
+  # check for banned hashed IP's
+  ip = flask.request.remote_addr
+  ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
+  if checkIP(ipHash): return flask.jsonify({"msg": "this IP has been banned from using RDSL uptimer", "succes": False}), 403
+    
   newPing = flask.request.form['add']
   pings = str(asyncio.run(dab.view('pings'))).split('\n')
   rawpings = str(asyncio.run(dab.view('pings')))
@@ -489,13 +535,10 @@ def sendcliJSON():
     ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
     with open("data/removes.txt", "a") as f:
       f.write(ipHash + ":" + remPing + "\n")
-    #newPings = str(asyncio.run(dab.view('pings')).replace(remPing+"\n", ""))
-    #print(newPings)
-    #asyncio.run(dab.set())
 
     asyncio.run(dab.set(pings=rawpings.replace("\n"+remPing, "")))
     print("removed "+remPing)
-    #print(str(asyncio.run(dab.view('pings'))))
+    
     msg = { "msg": "Succesfully Removed "+remPing}
     return flask.jsonify(msg), 200
 
@@ -544,7 +587,10 @@ def statsAPI():
   if Lockdown:
     data = {"msg": "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries! Lockdown mode also means the entire API goes offline!"}
     return flask.jsonify(data), 302
-  
+  # check for banned hashed IP's
+  ip = flask.request.remote_addr
+  ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
+  if checkIP(ipHash): return flask.jsonify({"msg": "This IP has been banned from using RDSL uptimer", "succes": False}), 403
   with open("./data/pings.txt", "r") as v: #opens file to obtaind ata
     content = v.read()
   replcount = str(asyncio.run(dab.view('pings'))).split('\n')
@@ -587,14 +633,7 @@ def allreplsAPI(): #for backup pinger
   repls = str(asyncio.run(dab.view('pings'))).split('\n')
   return flask.jsonify({"Error": None, "All_Repls": repls, "succes": True})
 
-def remove(remPing): #remove a repl
-  try:
-    rawpings = str(asyncio.run(dab.view('pings')))
-    asyncio.run(dab.set(pings=rawpings.replace("\n"+remPing, "")))
-    print("Removed "+remPing)
-    return "Removed"
-  except:
-    return "Error"
+
   
     
 @app.route("/api/private/ezremove", methods=['GET'])
