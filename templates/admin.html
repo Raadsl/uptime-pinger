@@ -4,7 +4,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+        
         <link rel="icon" type="image/x-icon" href="https://5895b253-7316-4557-b4fb-f3a24165a4ae.id.repl.co/static/assets/favicon.ico">
           <title>⠕ Raadsel | Uptimer</title>
             <!--discord embed things-->
@@ -19,190 +19,8 @@ body {
 	margin: 0px;
 	padding-left: 25px;
 	color: rgb(10, 10, 10);
-	background-color: rgb(0, 0, 0);
+
 	font-size: 20px;
-}
-
-input{
-	font-family: 'Spinnaker', sans-serif;
-	background-color: rgb(0, 0, 0);
-	border: 2px solid rgb(10, 10, 10);
-	border-radius: 10px;
-	padding: 5px;
-	color: rgb(10, 10, 10);
-}
-
-input{
-	font-family: 'Spinnaker', sans-serif;
-	background-color: rgb(0, 0, 0);
-	border: 2px solid rgb(10, 10, 10);
-	border-radius: 10px;
-	padding: 5px;
-	color: rgb(10, 10, 10);
-}
-
-
-input[type=submit] {
-  padding: 5px 15px;
-  background: #6b87f5;
-  border: 0 none;
-  cursor: pointer;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-}
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
-:root {
-    --card-background: #314d5eda;
-}
-
-
-
-.bg {
-    background-color: white;
-    background-size: cover;
-    background-position: top;
-    color: #c0caf5;
-
-    font-family: "JetBrains Mono", monospace;
-}
-
-/*
-  .card {
-    background-color: var(--card-background);
-    width: fit-content;
-    align-items: center;
-    text-align: center;
-    line-height: 30px;
-    padding: 20px;
-    border-radius: 10px;
-
-   /* centering * /
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-*/  
-
-.content {
-    background-color: var(--card-background);
-    width: fit-content;
-    height: fit-content;
-    text-align: left;
-    line-height: 30px;
-    padding: 20px;
-    border-radius: 10px;
-
-    /* centering * /
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);*/
-}
-
-.inline-list {
-    display: inline;
-}
-
-.il {
-    text-align: center;
-}
-
-/* get the visitcounter  bottom right*/
-
-div.visitcounter {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  width: 120px;
-}
-
-
-
-.pointmouse:hover { 
-  cursor: pointer;
-  animation: shake 0.5s;
-
-  animation-iteration-count: infinite; /*go on forever*/
-}
-
-@keyframes shake {
-  0% { transform: translate(1px, 1px) rotate(0deg); }
-  10% { transform: translate(-1px, -2px) rotate(-1deg); }
-  20% { transform: translate(-3px, 0px) rotate(1deg); }
-  30% { transform: translate(3px, 2px) rotate(0deg); }
-  40% { transform: translate(1px, -1px) rotate(1deg); }
-  50% { transform: translate(-1px, 2px) rotate(-1deg); }
-  60% { transform: translate(-3px, 1px) rotate(0deg); }
-  70% { transform: translate(3px, 1px) rotate(-1deg); }
-  80% { transform: translate(-1px, -1px) rotate(1deg); }
-  90% { transform: translate(1px, 2px) rotate(0deg); }
-  100% { transform: translate(1px, -2px) rotate(-1deg); }
-}
-
-
-
-a {
-    text-decoration: none;
-    color: #7dcfff;
-    transition: 0.5s;
-}
-
-a:hover {
-    text-decoration: underline;
-    color: #7aa2f7;
-}
-
-ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
- /*--button css */
-
-input[type=text] {
-  width: 130px;
-  box-sizing: border-box;
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  background-color: white;
-  background-image: url('/static/assets/newrepl.jpg');
-  background-position: 10px 10px; 
-  background-repeat: no-repeat;
-  padding: 12px 20px 12px 40px;
-  transition: width 0.4s ease-in-out;
-}
-
-input[type=text]:focus {
-  width: 80%;
-}
-  
-code, kbd, pre, samp {
-    font-family: var(--bs-font-monospace);
-    font-size: 1em;
-    direction: ltr;
-    unicode-bidi: bidi-override;
-}
-pre {
-    display: block;
-    margin-top: 0;
-    margin-bottom: 1rem;
-    overflow: auto;
-    font-size: .875em;
-}
-pre code {
-    font-size: inherit;
-    color: inherit;
-    word-break: normal;
-}
-code {
-    font-size: .875em;
-    color: #d63384;
-    word-wrap: break-word;
-}
-a>code {
-    color: inherit;
 }
 
 /* CSS */
@@ -259,21 +77,32 @@ a>code {
 </style>
 <script>
 function loading() {
-  document.getElementById("msg").innerHTML = "Loading... <a title='I am pinging your Replit to make sure it is an actual server'>Please wait</a>";
+  document.getElementById("msg").innerHTML = "Laden....";
 }
+
+
 </script>
+
     </head>
 <script src="https://replit.com/public/js/repl-auth-v2.js"></script>
 
-    <body class="bg">
-        <div class="content">
-            <center><h1 style="color: #7aa2f7;">RDSL Uptimer</h1>
+<h1 style="color: #7aa2f7;">RDSL Uptimer</h1>
               
-            <p>Hello {{ user_name }}, This is a simple Pinger to keep your Repl online!</p>
-              <p id="msg"></p>
+            <p>Sup {{ user_name }}, This is a simple Pinger to keep your Repl online!</p>
+              <p id="msg">{{ MSG}} </p>
+
+              <form action="{{ url_for('removeAPI') }}" method="get">
+		        	<input type="text" width="50%" name="repl" placeholder="url om te verwijderen">
+              <input type="hidden" width="50%" name="key" placeholder="Wachtwoord" value="{{ APIKEY }}">
+        			<input type="submit" onclick='loading()' value="Verwijder">
+            </form>
+              <form action="{{ url_for('addAPI') }}" method="get">
+		        	<input type="text" width="50%" name="repl" placeholder="url om toe te voegen (zonder checks)">
+              <input type="hidden" width="50%" name="key" placeholder="Wachtwoord" value="{{ APIKEY }}">
+        			<input type="submit" onclick='loading()' value="Voeg toe">
+            </form>
            
-           
-            <p>All pinged repls:</p>
+            <p>Alle gepingde repls ({{lenrepls}}):</p>
               
               <lu>
             {% for i in repls%}
@@ -281,20 +110,29 @@ function loading() {
                 <li>{{ i }}</li>
               
             {%endfor%}
+
               </lu>
-          <a href="/static/tos.txt" title="If maboi still sleeps it isnt my fault!!">Disclaimer & TOS</a> | <a href="/static/FAQ.pdf">FAQ</a></center>
-            <button onclick='window.open("/stats", "_self")' class="button-50" role="button">Stats</button>|<button onclick='window.open("/factory", "_self")' class="button-50" role="button">See our factory</button>|<button onclick='window.open("https://raadsel.is-a.dev")' class="button-50" role="button">Raadsel's Website</button>|<button onclick='window.open("/logout", "_self")' class="button-50 red" role="button">Logout</button>
+                <p id="msg"></p>
+              <p>======= Repls that respond with a 404 =======</p>
+  <lu>
+              {% for i in fourofours %}
+                  <li>{{ i }}</li>
+            {%endfor%}  
+
+</lu>
+              
+
+            <button onclick='window.open("/", "_self")' class="button-50" role="button">Home</button>|<button onclick='window.open("/factory", "_self")' class="button-50" role="button">See our factory</button>|<button onclick='window.open("https://raadsel.is-a.dev")' class="button-50" role="button">Raadsel's Website</button>|<button onclick='window.open("/logout", "_self")' class="button-50 red" role="button">Logout</button>
             </div>
-        </div>
-    </body>
+
     <script async src="https://zink.tips/zwc.js?rid=6341ce73d38c12e2b604bcc5&c=gold"></script>
   
 
 </html>
 <!--
  * @INFO
- * RDSL Pinger Coded by Raadsel#9398 | https://replit.com/@Raadsel
+ * RDSL uptimer Coded by Raadsel#9398 | https://replit.com/@Raadsel
  * @INFO
  * Please mention Me, when using this Code!
  * @INFO
- -->
+ --> 

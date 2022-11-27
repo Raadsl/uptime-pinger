@@ -307,7 +307,7 @@ a>code {
               
             </progress>
             <p title="The latest registered time between pings. So once in {{ timebetween }} seconds your server gets pinged!">Time between pings: {{ timebetween }} seconds</p>
-            <p title="since 17-10">Total pings sent: {{ pings }} pings</p>
+            <p id="totalpings" title="since 17-10-22">Total pings sent: {{ pings }} pings</p>
               <p title="so in total 2 ping servers">Backup ping servers: 1 backup servers</p> <!--static stat-->
             
             <button onclick='window.open("/", "_self")' class="button-50" role="button">Index</button>|<button onclick='window.open("/factory", "_self")' class="button-50" role="button">See our factory</button>|<button onclick='window.open("https://raadsel.is-a.dev")' class="button-50" role="button">Raadsel's Website</button>|<button onclick='window.open("/logout", "_self")' class="button-50 red" role="button">Logout</button>
@@ -319,7 +319,13 @@ a>code {
 if (screen.width <= 699) {
 document.location = "/m/stats";
 }
-setTimeout(() => { window.location.replace("https://up.rdsl.ga"); }, 295000);
+setTimeout(() => { window.location.replace("https://up.rdsl.ga/stats"); }, 30000);
+
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+document.getElementById("totalpings").innerHTML = `Total pings sent: ${numberWithCommas({{ pings }})} pings!`
+
 </script>
     </body>
 </html>

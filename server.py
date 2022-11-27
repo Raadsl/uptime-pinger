@@ -14,60 +14,63 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 import requests, replitdb, asyncio, flask
-from flask import make_response, jsonify 
+from flask import make_response, jsonify, redirect
 import json
 from threading import Thread
 import urllib.parse
 import aiohttp
 from aiohttp import web
-import requests
 import os
 # limiter
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+import hashlib # hashing a IP
 
-import hashlib
+# ============================ DEFINING VARIABLES ============================
+with open("config.json") as f:
+  data = json.load(f)
+  f.close()
+
+bannednames = data["SERVER"]["BANNEDNAMES"] #bans someone from using the front-end API. 
+bannedIPs = data["SERVER"]["BANNEDIPS"] #bans a hashed ip from the cli api
+Lockdown = data["SERVER"]["LOCKDOWN"] #lockdowns the pinger
+ultraLockdown = data["SERVER"]["ULTRALOCKDOWN"] #lockdowns the entire pinger and every webpage -- still pings
+admins = data["SERVER"]["ADMINS"] # admins that can add/remove all sites w/out being owner
+admins.append(os.environ["EXTRA_ADMIN"])
+MAXREPLS = data["SERVER"]["MAXREPLS"] #max repls allowed by a user to be added
 
 
-bannednames = [] #bans someone from using the front-end API. 
-bannedIPs = [] #bans a hashed ip from the cli api
-Lockdown = False
-ultraLockdown = False
-admins = ["Raadsel"]
-MAXREPLS = 40
+dab = replitdb.AsyncClient() #replitdb var
+app = flask.Flask(__name__) #flask var
 
-
-dab = replitdb.AsyncClient()
-app = flask.Flask(__name__)
-
-limiter = Limiter(
+limiter = Limiter( #ratelimits
     app,
     key_func=get_remote_address,
     default_limits=["100 per 15 minutes"],
     storage_uri="memory://",
-    #RATELIMIT_ENABLED=True
 )
+# ============================ DEFINING VARIABLES ============================
 
 
-
-if ultraLockdown: Lockdown = True
+if ultraLockdown: Lockdown = True #lockdown
 if os.environ["REPL_ID"] != "1fcd37d8-24c8-455d-a7eb-abbbc3a0b45a": Lockdown = True
 """
-@app.route('/') #old main page
+@app.route('/') #old main page without login
 def index():
   return flask.render_template('index.html')
 """
 
-#def numberWithCommas(x):
-#    return str(x).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
-
-
-
 @app.route("/") #new main page with login
+@app.route("/login")
 @limiter.exempt
 def login():
   if Lockdown:
     return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302 #lockdownmode
+    
+      # check for banned hashed IP's
+  ip = flask.request.remote_addr
+  ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
+  if checkIP(ipHash): return flask.render_template("msg.html", message="This IP has been banned from using RDSL uptimer", removeInput=True)
   try:
     username = flask.request.headers['X-Replit-User-Name']
     userid = flask.request.headers['X-Replit-User-Id']
@@ -79,12 +82,17 @@ def login():
         user_name=username
     ), 200 #renders template
 
-# Mobile pages
+# ============================ Mobile pages ============================
 @app.route("/m/") #new main page with login
 @limiter.exempt
 def login_mobile():
-  if Lockdown:
+  if Lockdown: # lockdown
     return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302 #lockdown mode
+
+    # check for banned hashed IP's
+  ip = flask.request.remote_addr
+  ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
+  if checkIP(ipHash): return flask.render_template("msg.html", message="This IP has been banned from using RDSL uptimer", removeInput=True)
   
   return flask.render_template('/mobile/login.html',
         user_id=flask.request.headers['X-Replit-User-Id'],
@@ -96,41 +104,42 @@ def login_mobile():
 def stats_mobile():
   if Lockdown:
     return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302 #lockdown mode
+
+      # check for banned hashed IP's
+  ip = flask.request.remote_addr
+  ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
+  if checkIP(ipHash): return flask.render_template("msg.html", message="This IP has been banned from using RDSL uptimer", removeInput=True)
+    
   with open("./data/pings.txt", "r") as v: #obtain data
     content = v.read()
   replcount = str(asyncio.run(dab.view('pings'))).split('\n')
-  replcount = str(len(replcount))
-  pingcount, online, offline, allpings, timebetween = content.split('\n')
+  replcount = str(len(replcount)) #repl count
+  pingcount, online, offline, allpings, timebetween = content.split('\n') # data from ping file
   try:
-    onlinepercent = round(int(online) / int(pingcount) * 100)
+    onlinepercent = round(int(online) / int(pingcount) * 100) #get all repls onlie in percentages
     onlinepercent = str(onlinepercent).replace('.0', '%')
   except: onlinepercent = 'ERROR WITH CALCULATION! TRY AGAIN LATER. (MY CAPS IS STUCK HELP)' #some weird error that sometimes happens
     
   return flask.render_template('mobile/stats.html', count=replcount, online=str(onlinepercent), pings=allpings, timebetween=timebetween), 200 #renders template
 
 
-# Mobile pages
-
-
-
-
-@app.route("/devindex") #new main page with login - Default Lockdown mode imune
-def devindex():
-  if ultraLockdown: return "The server is currently in (Ultra) lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302 #lockdown mode
-  return flask.render_template('dev.html',
-        user_id=flask.request.headers['X-Replit-User-Id'],
-        user_name=flask.request.headers['X-Replit-User-Name']
-    )
+# ============================ Mobile pages ============================
 
 @app.route("/admin") #admin dashboard. Supposed to see all added repls and then remove them via dashboard if its spam
 def admin():
   if ultraLockdown: return "The server is currently in (Ultra) lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302 #lockdown mode
   if flask.request.headers.get('X-Replit-User-Name') in admins:
     repls = asyncio.run(dab.view('pings')).split('\n')
+    with open("./data/404s.txt", "r") as f:
+      fourOfours = f.read()
     return flask.render_template("admin.html",
                            user_id=flask.request.headers['X-Replit-User-Id'],
                            user_name=flask.request.headers['X-Replit-User-Name'],
-                           repls=repls)
+                           repls=repls,
+                           APIKEY=os.environ["ALLREPLSAPIKEY"],
+                                MSG = flask.request.args.get('msg'),
+                                lenrepls=len(repls),
+                                fourofours = fourOfours.split("\n"))
   else:
     return "You are not an admin!"
 
@@ -143,15 +152,6 @@ def factory(): #smoll advertisement place: )
   if Lockdown:
     return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302
   return flask.render_template('factory.html'), 200
-
-@app.route("/api") #API documentation
-def api():
-  if Lockdown:
-    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries! This means all the API endpoints are also locked down. Which makes the documentation of them useless", 302 #lockdown. 
-  return flask.render_template('/info/api.html',
-        user_id=flask.request.headers['X-Replit-User-Id'],
-        user_name=flask.request.headers['X-Replit-User-Name']
-    ), 200
 
 
 @app.route('/logout') #remove all REPL_AUTH cookies for the domains up.rdsl.ga and defauly repl slug domain
@@ -194,35 +194,33 @@ def ping():
   return "200", 200 #backup pinger - - Lockdown mode imune
 
 @app.route("/coolpeeps") #shows all users using this service
-def pplwhousethis():
+def allusingpeeps():
   if Lockdown:
     return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302
+      # check for banned hashed IP's
+  ip = flask.request.remote_addr
+  ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
+  if checkIP(ipHash): return flask.render_template("msg.html", message="This IP has been banned from using RDSL uptimer", removeInput=True)
+    
   pongs = str(asyncio.run(dab.view('pings'))).split('\n')
   coolpeeps = "Cool peeps who use this pinger: Raadsel"
-  coolpeepsarr = ["raadsel"] #already added me:)
+  coolpeepsarr = ["Raadsel"] #already added me:)
   for i in pongs:
     try:
       o, name, repl, co = i.split(".")
       if not name in coolpeepsarr:
         coolpeepsarr.append(name)
         coolpeeps += f", {name}"
-        #print(f"NEW COOLPEEP {name}")
-        #print(coolpeeps)
       else: 
-        #print("already in") #if a peep has multiple repls
+
         continue
     except:
-      #print("not repl thing") #if the domain isnt like up.raadsel.repl.co it errors and wont show name
+
       continue
   return flask.render_template('coolpeeps.html', peeps=coolpeeps)
-  
-
-async def remove(url): #remove a domain from the repls. -- un-used and wont work
-  pings = str(dab.view('pings')).split('\n')
-  dab.set(pings=str(dab.view('pings')).replace("\n"+url, ""))
 
 
-async def check_replit(url, username=None, s=None): #check if the domain is a repl. If not it returns false <-- It should return it. (pls work)
+async def CheckIfRepl(url, username=None, s=None): #check if the domain is a repl. If not it returns false <-- It should return it. (pls work)
   print("checking replit")
   url = urllib.parse.urlparse(url)
   host = url.netloc
@@ -251,7 +249,7 @@ async def check_replit(url, username=None, s=None): #check if the domain is a re
 
 
   
-async def check_owner(url, username, s=None): #check if the user who submitted the repl is actually the owner
+async def CheckOwner(url, username, s=None): #check if the user who submitted the repl is actually the owner
   url = urllib.parse.urlparse(url)
   host = url.netloc
   url = f'https://{host}/__repl'
@@ -276,13 +274,13 @@ async def check_owner(url, username, s=None): #check if the user who submitted t
     with open("data/projects.txt", "a") as f:
       f.write(f"{r.url}\n")
     if username == inputuser:
-      print("check_replit: ", username, "is the owner")
+      print("Check If URL is a Repl: ", username, "is the owner")
       return True #good
-    if username.lower() == "raadsel":
-      print("check_replit: ", username, "is Raadsel, so bypasses the owner req")
+    if username in admins:
+      print("Check If URL is a Repl: ", username, "is an admin, so bypasses the owner req")
       return True #good
     else:
-      print("check_replit: ", username, "is not the owner")
+      print("Check If URL is a Repl: ", username, "is not the owner")
       return False #bad
   except Exception as e:
     print(type(e), e, '----- WARNING ')
@@ -292,34 +290,14 @@ async def check_owner(url, username, s=None): #check if the user who submitted t
 if os.environ["REPL_ID"] != "1fcd37d8-24c8-455d-a7eb-abbbc3a0b45a": Lockdown = True #bad
 # IF, you fork this. Please just give GOOD credits
   
-
-
-@app.route('/stats') #stat page
-def stats():
-  if Lockdown:
-    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302 #lockdown
-  with open("./data/pings.txt", "r") as v: #opens file to obtaind ata
-    content = v.read()
-  replcount = str(asyncio.run(dab.view('pings'))).split('\n') #get all repls in db
-  replcount = str(len(replcount)) #get number of relps
-  pingcount, online, offline, allpings, timebetween = content.split('\n') #import all stat data
-  try:
-    Ronlinepercent = round(int(online) / int(pingcount) * 100)
-    onlinepercent = str(Ronlinepercent).replace('.0', '%')
-  except: onlinepercent = 'ERROR WITH CALCULATION! TRY AGAIN LATER. (MY CAPS IS STUCK HELP)' #weird error that sometimes appears
-    
-  return flask.render_template('stats.html', count=replcount, online=str(onlinepercent), pings=allpings, rawpercent = Ronlinepercent, timebetween=timebetween), 200 #renders template
-
-
-
-def checknames(inname): #check names is To see if a user has exceeded the 25 repls limit - Edit: 40 is the limit
+def CheckReplCount(inname): #check names is To see if a user has exceeded the 25 repls limit - Edit: 40 is the limit
   pongs = str(asyncio.run(dab.view('pings'))).split('\n') #get all repls
   pingercount = 0
   names = []
   for i in pongs:
     try:
       o, name, repl, co = i.split(".") #get the name if its a default repl domain
-      if name.lower() == 'raadsel': # I am built different
+      if name in admins: # I am built different
         return 0
       if not o in names:
         names.append(o)
@@ -340,11 +318,21 @@ def add(repl):
   except:
     print("ERROR WITH ADDING "+repl)
 
-def remove(repl):
+def remove(repl, ip=None, gui=False):
   try:
     print("Removing: "+repl)
     rawpings = str(asyncio.run(dab.view('pings')))
     asyncio.run(dab.set(pings=rawpings.replace("\n"+repl, "")))
+    if ip is not None:
+      if gui:
+        with open("data/removes.txt", "a") as f:
+          f.write(ip + ":" + repl + " --GUI\n")
+          f.close()
+      else:
+        with open("data/removes.txt", "a") as f:
+          f.write(ip + ":" + repl + " --CLI\n")
+          f.close()
+          
     print("Removed "+repl)
   except:
     print("ERROR WITH REMOVING "+repl)
@@ -352,6 +340,28 @@ def remove(repl):
 def checkIP(IP):
   if IP in bannedIPs: return True
   else: return False
+
+@app.route('/stats') #stat page
+def stats():
+  if Lockdown:
+    return "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries!", 302 #lockdown
+
+    # check for banned hashed IP's
+  ip = flask.request.remote_addr
+  ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
+  if checkIP(ipHash): return flask.render_template("msg.html", message="This IP has been banned from using RDSL uptimer", removeInput=True)
+    
+  with open("./data/pings.txt", "r") as v: #opens file to obtaind ata
+    content = v.read()
+  replcount = str(asyncio.run(dab.view('pings'))).split('\n') #get all repls in db
+  replcount = str(len(replcount)) #get number of relps
+  pingcount, online, offline, allpings, timebetween = content.split('\n') #import all stat data
+  try:
+    Ronlinepercent = round(int(online) / int(pingcount) * 100)
+    onlinepercent = str(Ronlinepercent).replace('.0', '%')
+  except: onlinepercent = 'ERROR WITH CALCULATION! TRY AGAIN LATER. (MY CAPS IS STUCK HELP)' #weird error that sometimes appears
+    
+  return flask.render_template('stats.html', count=replcount, online=str(onlinepercent), pings=allpings, rawpercent = Ronlinepercent, timebetween=timebetween), 200 #renders template
 
   
 @app.route('/add', methods=['POST']) #add repls by POST request
@@ -362,7 +372,7 @@ def send():
   # check for banned hashed IP's
   ip = flask.request.remote_addr
   ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
-  if checkIP(ipHash): return flask.render_template("msg.html", message="This IP has been banned from using RDSL uptimer")
+  if checkIP(ipHash): return flask.render_template("msg.html", message="This IP has been banned from using RDSL uptimer", removeInput=True)
 
     
   newPing = flask.request.form['add']
@@ -372,10 +382,10 @@ def send():
   if 'X-Replit-User-Name' in flask.request.headers:
    username = flask.request.headers['X-Replit-User-Name'] #Check name
   if username in bannednames: return "You have been banned from using this service, please contact the admin", 403
-  is_replit = asyncio.run(check_replit(newPing, username))
+  is_replit = asyncio.run(CheckIfRepl(newPing, username))
   if not is_replit: #check if site is from repl
     return flask.render_template('msg.html', message="This is not a replit server, or this isnt a Repl from you!! RDSL Uptimer only supports Replit projects, that were added by there owners!") #not replit
-  is_owner = asyncio.run(check_owner(newPing, username))
+  is_owner = asyncio.run(CheckOwner(newPing, username))
   if not is_owner: #check if user is the owner
     print("NOT OWNER, -- not adding")
     return flask.render_template('msg.html', message="This isnt a Repl from you!! RDSL Uptimer only pings Repls with permission from their owners! If this is a team repl. Im sorry for the difficulties, you can bypass this by ading it via the CLI/API!") #not replit owner
@@ -384,15 +394,9 @@ def send():
   if remPing in pings and newPing.startswith("rem "): #check if user wants to remove it
     # Get hashed IP:
     ip = flask.request.remote_addr
-    # HASH IP:
     ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest() #unrecoverable hash
-    with open("data/removes.txt", "a") as f:
-      f.write(ipHash + ":" + remPing + " -- GUI\n")
     
-    remove(remPing)
-    #asyncio.run(dab.set(pings=rawpings.replace("\n"+remPing, "")))
-    print("removed "+remPing)
-    # print(str(asyncio.run(dab.view('pings'))))
+    remove(remPing, ipHash, gui=True)
     
     return flask.render_template('msg.html', message="Removed "+remPing)
 
@@ -413,7 +417,7 @@ def send():
         reqq = requests.get(newPing)
         if not reqq.status_code in [200, 304, 100, 201, 202, 206, 302]: #check if site is online
           return flask.render_template('msg.html', message="Invalid URL! Please make sure you configured the webserver right!") #if pinging failed
-        if checknames(newPing) >= MAXREPLS:
+        if CheckReplCount(newPing) >= MAXREPLS:
           return flask.render_template('msg.html', message="You are already at 40 repls! Thats the max we ping. Also you can't have more then 40 Repls online at the same time on your Replit account, so its useless anyway. You can remove repls by inputting `rem + replurl` to the urlpinger input.")
         
         add(newPing) # ADD REPL
@@ -430,6 +434,10 @@ def send():
 
  # API
 
+@app.route("/api")
+def APIdocs():
+  return flask.render_template("info/api.html")
+
 @app.route('/api/cli', methods=['POST']) #yes ik this is not protected by repl auth + API post request
 @limiter.limit("1/6 seconds", override_defaults=False) #ratelimit
 def sendcli():
@@ -443,7 +451,7 @@ def sendcli():
   newPing = flask.request.form['add']
   pings = str(asyncio.run(dab.view('pings'))).split('\n')
 
-  is_replit = asyncio.run(check_replit(newPing))
+  is_replit = asyncio.run(CheckIfRepl(newPing))
   if not is_replit:
     return "This is not a replit server! RDSL Uptimer only supports Replit projects!", 400
   newPing = newPing.lower()
@@ -451,15 +459,12 @@ def sendcli():
   
   
   if remPing in pings and newPing.startswith("rem "):
-    # Get hashed IP:
+    # get hashed IP
     ip = flask.request.remote_addr
-    # HASH IP:
     ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
-    
-    with open("data/removes.txt", "a") as f:
-      f.write(ipHash + ":" + remPing + "\n")
-
-    remove(remPing)
+    if checkIP(ipHash):
+      return "Your IP has been banned from using RDSL uptimer"
+    remove(remPing, ipHash)
 
     return "200 - Succesfully Removed "+remPing, 200
   try:
@@ -474,12 +479,9 @@ def sendcli():
         req = requests.get(newPing)
         if req.status_code != 200:
           return flask.jsonify({"msg": f"The URL '{newPing}' does not respond to our pings. Please check your webserver and if you entered the right URL and try again!"}), 302
-        if checknames(newPing) >= MAXREPLS:
+        if CheckReplCount(newPing) >= MAXREPLS:
           return "403 - You are already at 40 uptimed repls! Thats the max we ping. Also you can't have more then 40 Repls online at the same time on your Replit account, so its useless anyway. You can remove repls by inputting `rem + replurl` to the urlpinger input."
 
-        ip = flask.request.remote_addr
-          # HASH IP:
-        ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
 
         if checkIP(ipHash):
           return "Your IP has been banned from using RDSL uptimer"
@@ -519,10 +521,9 @@ def sendcliJSON():
   newPing = flask.request.form['add']
   pings = str(asyncio.run(dab.view('pings'))).split('\n')
   rawpings = str(asyncio.run(dab.view('pings')))
-  #print(str(asyncio.run(dab.view('pings'))))
-  #print(pings)
+
   # remove ping
-  is_replit = asyncio.run(check_replit(newPing))
+  is_replit = asyncio.run(CheckIfRepl(newPing))
   if not is_replit:
     msg = { "msg": "This is not a replit server! RDSL Uptimer only supports Replit projects!"}
     return flask.jsonify(msg), 400
@@ -533,10 +534,8 @@ def sendcliJSON():
     ip = flask.request.remote_addr
     # HASH IP:
     ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
-    with open("data/removes.txt", "a") as f:
-      f.write(ipHash + ":" + remPing + "\n")
 
-    asyncio.run(dab.set(pings=rawpings.replace("\n"+remPing, "")))
+    remove(remPing, ipHash)
     print("removed "+remPing)
     
     msg = { "msg": "Succesfully Removed "+remPing}
@@ -555,7 +554,7 @@ def sendcliJSON():
         req = requests.get(newPing)
         if req.status_code != 200:
           return flask.jsonify({"msg": f"The URL '{newPing}' does not respond to our pings. Please check your webserver and if you entered the right URL and try again!"}), 302
-        if checknames(newPing) >= MAXREPLS:
+        if CheckReplCount(newPing) >= MAXREPLS:
           return flask.jsonify({"msg": "You are already at 40 repls! Thats the max we ping. Also you can't have more then 40 Repls online at the same time on your Replit account, so its useless anyway. You can remove repls by inputting `rem + replurl` to the urlpinger input.", "succes": False}), 400
         asyncio.run(dab.set(pings=str(asyncio.run(dab.view('pings'))) + '\n' + newPing))
           # Get hashed IP:
@@ -615,7 +614,10 @@ def statsAPI():
             "Name": "Raadsel",
             "Replit": "https://replit.com/@Raadsel",
             "Github": "https://github.com/Raadsl"
-          }
+          },
+          "Admins": admins,
+          "Maxreplsallowed": MAXREPLS
+          
           }
     
   
@@ -624,6 +626,31 @@ def statsAPI():
     data = {"error": True}
     return flask.jsonify(data), 400
                                
+
+@app.route('/api/ModInfo', methods=['GET'])  # Get some mod info, used for backup pinger
+@limiter.limit("1/30 seconds", override_defaults=False) #ratelimit
+def ModeratorInfoAPI():
+  if Lockdown:
+    data = {"msg": "The server is currently in lockdown mode. Please try again later. Your Repls are still being pinged, no worries! Lockdown mode also means the entire API goes offline!"}
+    return flask.jsonify(data), 302
+  # check for banned hashed IP's
+  ip = flask.request.remote_addr
+  ipHash = hashlib.md5(ip.encode('utf-8')).hexdigest()
+  if checkIP(ipHash): return flask.jsonify({"msg": "This IP has been banned from using RDSL uptimer", "succes": False}), 403
+  data = {
+    "data": {
+    "Admins": admins,
+    "BannedUsers": bannednames,
+    "BannedHashedIps": bannedIPs,
+    "Lockdown": Lockdown, #woah, if this is true you cant see this lolololol
+    "UltraLockdown": ultraLockdown,
+    "MaxReplsAllowed": MAXREPLS
+  },
+  "succes": True
+  }
+  return flask.jsonify(data), 200
+
+
     
 @app.route("/api/private/allrepls", methods=['GET'])
 def allreplsAPI(): #for backup pinger
@@ -642,8 +669,21 @@ def removeAPI(): #for backup pinger
   repl = flask.request.args.get('repl')
   if key != os.environ["ALLREPLSAPIKEY"]:
     return flask.jsonify({"Error": "Invalid API key", "succes": False}), 403
-  return remove(repl)
+  else:
+    remove(repl)
+    return flask.redirect("https://up.rdsl.ga/admin?msg=succes"),200
+   # else:
+    #  return flask.redirect("/admin?msg=failed%20See%20Logs"),400
 
+@app.route("/api/private/ezadd", methods=['GET'])
+def addAPI(): #for backup pinger
+  key = flask.request.args.get('key')
+  repl = flask.request.args.get('repl')
+  if key != os.environ["ALLREPLSAPIKEY"]:
+    return flask.jsonify({"Error": "Invalid API key", "succes": False}), 403
+  else:
+    add(repl)
+    return flask.redirect("https://up.rdsl.ga/admin?msg=succes"),200
     
 
 #ERROR HANDLING
@@ -681,6 +721,6 @@ def actualrun():
  * @INFO
  * RDSL Pinger Coded by Raadsel#9398 | https://replit.com/@Raadsel
  * @INFO
- * Please mention Me, when using this Code!
+ * Please mention me, when using this Code!
  * @INFO
  """

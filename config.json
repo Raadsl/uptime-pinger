@@ -1,0 +1,16 @@
+{
+	"SERVER": {
+		"LOCKDOWN": false,
+		"ULTRALOCKDOWN": false,
+		"BANNEDNAMES": [],
+		"BANNEDIPS": [],
+		"ADMINS": ["Raadsel"],
+		"MAXREPLS": 40
+	},
+	"PINGER": {
+		"SLEEPONSTART": 0,
+		"SLEEPTIME": 90,
+		"TIMEOUT": 10,
+    "PRINTALLONSTART": false
+	}
+}

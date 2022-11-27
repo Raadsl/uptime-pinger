@@ -272,11 +272,16 @@ a>code {
 
     <body class="bg">
         <div class="content">
+          {% if user_name == "Raadsel"%}
+          <center><button onclick='window.open("/admin", "_self")' class="button-50 red" role="button">ADMIN DASH</button></center>
+          {%endif%}
             <center><h1 style="color: #7aa2f7;">RDSL Uptimer</h1>
+            {% if user_name != "Raadsel"%}
             <p>Hello {{ user_name }}, This is a simple Pinger to keep your Repl online!</p>
+              {%endif%}
               <p id="msg"></p>
             <form action="{{ url_for('send') }}" method="post"> <!--sends a POST requests to the server when submitted-->
-		        	<input type="text" width="30%" name="add" placeholder="url to ping (eg: https://example.com)">
+		        	<input type="text" width="30%" name="add" placeholder="url to ping (eg: https://repl.guy.repl.co)">
         			<input type="submit" onclick='loading()' value="Ping">
         		</form>
             <p>Put: `<code>rem </code>` before your URL if you want to remove it from the pinger</p>
