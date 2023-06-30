@@ -1,9 +1,5 @@
 # info
-A not really light-weighted pinger. It works tough!
-10 seconds countdown
-+ awesome stats page & API
-For me:
-data/pings = allpings, goodpings, badpings, totalpings, time between pings
+A not really light-weighted pinger. It works though!
 
 # Acknowledgements
 Took a lot of inspiration for the front-end from Pingers like: [up.Coding398.dev](https://up.Coding398.dev) and [up.terminatorfishstudios.com](https://up.terminatorfishstudios.com). Also learnt about '<a href="https://zink.tips/">zink</a>' <!--Woah you can use <a href in markdown??? Didnt know that!-->there
